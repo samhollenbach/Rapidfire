@@ -13,9 +13,13 @@ public class PlayerControl : MonoBehaviour {
 	bool facingRight = true;
 	bool jump = false;
 
+	//If some other force is moving the player
+	public bool ungrounded = false;
+
 	//Conditions for checking whether or not the character is grounded
 	public Transform groundCheck;
 	private bool grounded = false;
+
 	float groundRadius = 0.2f;
 	public LayerMask whatIsGround;
 	//Links the character to animations
@@ -46,7 +50,7 @@ public class PlayerControl : MonoBehaviour {
 	void FixedUpdate () {
 		float moveH = Input.GetAxisRaw ("Horizontal");
 
-		if (grounded && moveH == 0) {
+		if (!ungrounded && moveH == 0) {
 			GetComponent<Rigidbody2D>().velocity = new Vector2(0, GetComponent<Rigidbody2D>().velocity.y);
 		}
 
