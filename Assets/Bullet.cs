@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -34,7 +34,7 @@ public class Bullet : NetworkBehaviour {
 			GameObject p = col.gameObject;
 			if (p != playerSource){
 				p.GetComponent<PlayerHealth> ().Hurt (bulletDamage);
-				//NetworkServer.Destroy (gameObject);
+				NetworkServer.Destroy (gameObject);
 			}
 		} else if (col.tag == "ground") {
 			NetworkServer.Destroy (gameObject);
