@@ -12,18 +12,27 @@ public class PlayerControl : NetworkBehaviour {
 	public float moveForce = 900f;
 	public float jumpForce = 5000f;
 
+	[SyncVar]
 	public int HP = 100;
+
+	[SyncVar]
 	public bool dead = false;
 
 	//Conditions for direction faced and ability to jump
+	[SyncVar]
 	bool facingRight = true;
+
+	[SyncVar]
 	bool jump = false;
 
 	//If some other force is moving the player
+	[SyncVar]
 	public bool ungrounded = false;
 
 	//Conditions for checking whether or not the character is grounded
 	public Transform groundCheck;
+
+	[SyncVar]
 	private bool grounded = false;
 
 	float groundRadius = 0.2f;
@@ -34,9 +43,10 @@ public class PlayerControl : NetworkBehaviour {
 	public Transform gun;
 
 
-	[SyncVar]
+	//[SyncVar]
 	public Vector3 mousePos;
 
+	[SyncVar]
 	private GameObject playerGun;
 
 
@@ -83,8 +93,9 @@ public class PlayerControl : NetworkBehaviour {
 
 		if (Input.GetButtonDown ("Fire1")) {
 			if (gun != null) {
-				print (mousePos);
-				CmdFire (gameObject, mousePos);
+				Vector3 mouse = Input.mousePosition;
+				mouse.z = 10;
+				CmdFire (this.gameObject, Camera.main.ScreenToWorldPoint(mouse));
 			
 			}
 		}
@@ -92,24 +103,11 @@ public class PlayerControl : NetworkBehaviour {
 	}
 
 
-	public Gun getCurrentGun(){
-		return(gun.GetComponent<Gun>());
-	}
-
-	private void setMousePos(Vector3 m){
-		mousePos = m;
-	}
-
-	public Vector3 getMousePos(){
-		return(mousePos);
-	}
-
 	void FixedUpdate () {
 		if (!isLocalPlayer)
 			return;
 
 
-		
 		float moveH = Input.GetAxisRaw ("Horizontal");
 
 		if (!ungrounded && moveH == 0) {
@@ -129,13 +127,18 @@ public class PlayerControl : NetworkBehaviour {
 			//set horizontal velocity to maxspeed
 			GetComponent<Rigidbody2D>().velocity = new Vector2(Mathf.Sign(GetComponent<Rigidbody2D>().velocity.x) * maxSpeed, GetComponent<Rigidbody2D>().velocity.y);
 
+
+//		if ((Camera.main.ScreenToWorldPoint (getMousePos ()).x > transform.position.x && !facingRight) 
+//			|| (Camera.main.ScreenToWorldPoint (getMousePos ()).x < transform.position.x && facingRight)) {
+//			//Flip ();
+//		}
 		//If player is moving RIGHT but facing left, flip sprite
-		if(moveH > 0 && !facingRight)
+		if(moveH > 0 && !facingRight){
 			Flip();
 		//If player is moving LEFT but facing right, flip sprite
-		else if(moveH < 0 && facingRight)
+		}else if(moveH < 0 && facingRight){
 			Flip();
-
+		}
 		if(jump)
 		{
 			//Tells the animator when to play the jump script
@@ -151,27 +154,22 @@ public class PlayerControl : NetworkBehaviour {
 
 
 	}
-
-
-
-
-
+		
 	[Command]
-	void CmdFire(GameObject player, Vector3 mouse){
+	void CmdFire(GameObject player, Vector3 cursor){
 
 		Gun cg = player.GetComponentInChildren<Gun> ();
-		//print (cg.transform.position);
+
 		Vector3 playerPos = player.transform.position + new Vector3 (2,5,0);
 
-		var mousePos = mouse;
-		mousePos.z = 10;
+		Vector3 cursorInWorldPos = cursor;
 
-
-		Vector3 cursorInWorldPos = Camera.main.ScreenToWorldPoint(mousePos);
 		Vector3 direction = cursorInWorldPos - playerPos;
 		direction.z = 0;
 		direction.Normalize();
+
 		cg.bullet.GetComponent<Bullet>().setSource (player);
+
 		if ((direction.x < 0 && player.GetComponent<PlayerControl> ().facingRight) || (direction.x > 0 && !player.GetComponent<PlayerControl> ().facingRight)) {
 			player.GetComponent<PlayerControl> ().Flip ();
 		}
@@ -181,10 +179,12 @@ public class PlayerControl : NetworkBehaviour {
 		}
 
 		var projectile = Instantiate(cg.bullet, cg.transform.position + gunPos, Quaternion.identity);
+
+		var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+		projectile.transform.rotation = Quaternion.AngleAxis (angle,Vector3.forward);
+		projectile.GetComponent<Bullet> ().playerSource = player;
 		projectile.GetComponent<Rigidbody2D>().velocity = (direction * cg.speed) * 5;
-		if (projectile.GetComponent<Rigidbody2D> ().velocity.x < 0) {
-			projectile.GetComponent<SpriteRenderer> ().flipX = true;
-		}
+
 		//print(player.transform.position);
 		NetworkServer.Spawn (projectile);
 	}
@@ -200,6 +200,20 @@ public class PlayerControl : NetworkBehaviour {
 			Destroy (gameObject);
 		}
 	}
+
+
+	public Gun getCurrentGun(){
+		return(gun.GetComponent<Gun>());
+	}
+
+	private void setMousePos(Vector3 m){
+		mousePos = m;
+	}
+
+	public Vector3 getMousePos(){
+		return(mousePos);
+	}
+
 
 	void Flip() {
 		//Change the direction boolean
