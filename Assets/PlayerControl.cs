@@ -60,7 +60,8 @@ public class PlayerControl : NetworkBehaviour {
 
 	public override void OnStartLocalPlayer()
 	{
-		
+		GameObject.Find("HUDCanvas").GetComponent<Canvas>();
+
 		groundCheck = transform.Find("groundCheck");
 
 		//anim = GetComponent<Animator>();
@@ -96,17 +97,14 @@ public class PlayerControl : NetworkBehaviour {
 				Vector3 mouse = Input.mousePosition;
 				mouse.z = 10;
 				CmdFire (this.gameObject, Camera.main.ScreenToWorldPoint(mouse));
-			
 			}
 		}
-
 	}
 
 
 	void FixedUpdate () {
 		if (!isLocalPlayer)
 			return;
-
 
 		float moveH = Input.GetAxisRaw ("Horizontal");
 
@@ -151,8 +149,6 @@ public class PlayerControl : NetworkBehaviour {
 			// Reset jump to ensure player can't jump again unless jump condition is satisfied
 			jump = false;
 		}
-
-
 	}
 		
 	[Command]
@@ -188,19 +184,6 @@ public class PlayerControl : NetworkBehaviour {
 		//print(player.transform.position);
 		NetworkServer.Spawn (projectile);
 	}
-
-	public void Hurt(int damage) {
-		HP -= damage;
-		Death ();
-	}
-
-	public void Death() {
-		if (HP <= 0) {
-			dead = true;
-			Destroy (gameObject);
-		}
-	}
-
 
 	public Gun getCurrentGun(){
 		return(gun.GetComponent<Gun>());

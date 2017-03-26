@@ -4,10 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
-public class PlayerHealth : MonoBehaviour {
+public class PlayerHealth : NetworkBehaviour {
 
 	public int HP = 100;
+
+	[SyncVar]
 	public int currentHP;
+
 	public Slider healthSlider;
 	public Image hurtImage;
 	public Color flashColor = new Color(1f, 0f, 0f, 0.1f);
@@ -42,8 +45,12 @@ public class PlayerHealth : MonoBehaviour {
 	}
 
 	public void Hurt(int damage) {
+		if (!isServer) {
+			return;
+		}
 		hurt = true;
 		currentHP -= damage;
+		print (currentHP);
 		healthSlider.value = currentHP;
 		if (!dead) {
 			Death ();
@@ -51,6 +58,9 @@ public class PlayerHealth : MonoBehaviour {
 	}
 
 	public void Death() {
+		if (!isServer) {
+			return;
+		}
 		if (HP <= 0) {
 			dead = true;
 			NetworkServer.Destroy (gameObject);
