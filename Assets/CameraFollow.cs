@@ -3,6 +3,7 @@ using UnityEngine.Networking;
 
 public class CameraFollow : NetworkBehaviour
 {
+	[SyncVar]
 	public Transform playerTransform;
 	public int depth = -10;
 
