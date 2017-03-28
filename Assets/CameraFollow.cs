@@ -3,7 +3,7 @@ using UnityEngine.Networking;
 
 public class CameraFollow : NetworkBehaviour
 {
-	[SyncVar]
+	//[SyncVar]
 	public GameObject player;
 	public int depth = -10;
 
@@ -37,9 +37,8 @@ public class CameraFollow : NetworkBehaviour
 		}
 	}
 
-	[Command]
-	public void CmdSetTarget(GameObject target)
-	{
-		player = target;
+	public void setTarget(GameObject target){
+		this.player = target;
 	}
+		
 }
