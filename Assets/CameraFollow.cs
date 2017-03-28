@@ -4,7 +4,7 @@ using UnityEngine.Networking;
 public class CameraFollow : NetworkBehaviour
 {
 	[SyncVar]
-	public Transform playerTransform;
+	public GameObject player;
 	public int depth = -10;
 
 
@@ -13,7 +13,7 @@ public class CameraFollow : NetworkBehaviour
 	// Update is called once per frame
 	void Update()
 	{
- 
+		Transform playerTransform = player.transform;
 		float x = transform.position.x;
 		float y = transform.position.y;
 
@@ -38,8 +38,8 @@ public class CameraFollow : NetworkBehaviour
 	}
 
 	[Command]
-	public void CmdSetTarget(Transform target)
+	public void CmdSetTarget(GameObject target)
 	{
-		playerTransform = target;
+		player = target;
 	}
 }

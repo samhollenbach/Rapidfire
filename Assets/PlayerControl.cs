@@ -69,7 +69,7 @@ public class PlayerControl : NetworkBehaviour {
 		//Vector3 gunSpawnPosition = transform.position + new Vector3 (2,5,0);
 		//playerGun = (GameObject)Instantiate (gun.gameObject, gunSpawnPosition, Quaternion.identity);
 		//currentGun.GetComponent<Gun>().playerControl = this;
-		Camera.main.GetComponent<CameraFollow>().CmdSetTarget(this.transform);
+		Camera.main.GetComponent<CameraFollow>().CmdSetTarget(this.gameObject);
 
 		GetComponent<SpriteRenderer>().color = Color.yellow;
 
