@@ -63,6 +63,7 @@ public class PlayerHealth : NetworkBehaviour {
 		}
 		if (HP <= 0) {
 			dead = true;
+			print (dead);
 			NetworkServer.Destroy (gameObject);
 		}
 	}

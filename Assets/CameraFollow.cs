@@ -36,9 +36,8 @@ public class CameraFollow : NetworkBehaviour
 			transform.position = new Vector3 (x, y, depth);
 		}
 	}
-
-	[Command]
-	public void CmdSetTarget(GameObject target)
+		
+	public void setTarget(GameObject target)
 	{
 		player = target;
 	}
