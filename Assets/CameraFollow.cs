@@ -3,7 +3,7 @@ using UnityEngine.Networking;
 
 public class CameraFollow : NetworkBehaviour
 {
-	[SyncVar]
+	//[SyncVar]
 	public GameObject player;
 	public int depth = -10;
 
@@ -36,9 +36,16 @@ public class CameraFollow : NetworkBehaviour
 			transform.position = new Vector3 (x, y, depth);
 		}
 	}
+<<<<<<< HEAD
 		
 	public void setTarget(GameObject target)
 	{
 		player = target;
+=======
+
+	public void setTarget(GameObject target){
+		this.player = target;
+>>>>>>> ebf3a14c6d06f59ad003dc895f69477911b6a7e5
 	}
+		
 }

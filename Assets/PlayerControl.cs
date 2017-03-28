@@ -49,13 +49,17 @@ public class PlayerControl : NetworkBehaviour {
 	[SyncVar]
 	private GameObject playerGun;
 
+	Camera playerCam;
+
 
 	/// <summary>
 	/// Start this instance.
 	/// </summary>
 	// Use this for initialization
-	void Start () {
-		
+	void Awake () {
+		playerCam = GetComponentInChildren<Camera> ();
+		playerCam.gameObject.SetActive (false);
+
 	}
 
 	public override void OnStartLocalPlayer()
@@ -69,7 +73,10 @@ public class PlayerControl : NetworkBehaviour {
 		//Vector3 gunSpawnPosition = transform.position + new Vector3 (2,5,0);
 		//playerGun = (GameObject)Instantiate (gun.gameObject, gunSpawnPosition, Quaternion.identity);
 		//currentGun.GetComponent<Gun>().playerControl = this;
-		Camera.main.GetComponent<CameraFollow>().setTarget(this.gameObject);
+
+		//Camera.main.GetComponent<CameraFollow>().CmdSetTarget(this.gameObject);
+		playerCam.gameObject.SetActive(true);
+		playerCam.GetComponent<CameraFollow> ().setTarget (this.gameObject);
 
 		GetComponent<SpriteRenderer>().color = Color.yellow;
 
