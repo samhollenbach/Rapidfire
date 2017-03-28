@@ -37,7 +37,8 @@ public class CameraFollow : NetworkBehaviour
 		}
 	}
 
-	public void setTarget(Transform target)
+	[Command]
+	public void CmdSetTarget(Transform target)
 	{
 		playerTransform = target;
 	}
