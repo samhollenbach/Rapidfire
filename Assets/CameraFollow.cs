@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 
-public class CameraFollow : NetworkBehaviour
+public class CameraFollow : MonoBehaviour
 {
-	public Transform playerTransform;
+	//[SyncVar]
+	public GameObject player;
 	public int depth = -10;
 
 
@@ -12,7 +13,7 @@ public class CameraFollow : NetworkBehaviour
 	// Update is called once per frame
 	void Update()
 	{
- 
+		Transform playerTransform = player.transform;
 		float x = transform.position.x;
 		float y = transform.position.y;
 
@@ -36,8 +37,8 @@ public class CameraFollow : NetworkBehaviour
 		}
 	}
 
-	public void setTarget(Transform target)
-	{
-		playerTransform = target;
+	public void setTarget(GameObject target){
+		this.player = target;
 	}
+		
 }
