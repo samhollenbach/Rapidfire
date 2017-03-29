@@ -50,6 +50,7 @@ public class PlayerControl : NetworkBehaviour {
 	private GameObject playerGun;
 
 	Camera playerCam;
+	AudioListener camAudio;
 
 
 	/// <summary>
@@ -59,7 +60,8 @@ public class PlayerControl : NetworkBehaviour {
 	void Awake () {
 		playerCam = GetComponentInChildren<Camera> ();
 		playerCam.gameObject.SetActive (false);
-
+//		camAudio = GetComponentInChildren<AudioListener>();
+//		camAudio.gameObject.SetActive (false);
 	}
 
 	public override void OnStartLocalPlayer()
@@ -77,6 +79,8 @@ public class PlayerControl : NetworkBehaviour {
 		//Camera.main.GetComponent<CameraFollow>().CmdSetTarget(this.gameObject);
 		playerCam.gameObject.SetActive(true);
 		playerCam.GetComponent<CameraFollow> ().setTarget (this.gameObject);
+
+//		camAudio.gameObject.SetActive (true);
 
 		GetComponent<SpriteRenderer>().color = Color.yellow;
 
@@ -103,7 +107,7 @@ public class PlayerControl : NetworkBehaviour {
 			if (gun != null) {
 				Vector3 mouse = Input.mousePosition;
 				mouse.z = 10;
-				CmdFire (this.gameObject, Camera.main.ScreenToWorldPoint(mouse));
+				CmdFire (this.gameObject, playerCam.ScreenToWorldPoint(mouse));
 			}
 		}
 	}
