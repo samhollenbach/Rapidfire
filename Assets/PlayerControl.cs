@@ -49,8 +49,13 @@ public class PlayerControl : NetworkBehaviour {
 	[SyncVar]
 	private GameObject playerGun;
 
+	[SyncVar]
+	public Vector3 scaleDirection;
+
 	Camera playerCam;
 	AudioListener camAudio;
+
+	private NetTracker netTracker;
 
 
 	/// <summary>
@@ -66,6 +71,9 @@ public class PlayerControl : NetworkBehaviour {
 
 	public override void OnStartLocalPlayer()
 	{
+
+		this.netTracker = GetComponent<NetTracker> ();
+
 		GameObject.Find("HUDCanvas").GetComponent<Canvas>();
 
 		groundCheck = transform.Find("groundCheck");
@@ -81,6 +89,10 @@ public class PlayerControl : NetworkBehaviour {
 		playerCam.GetComponent<CameraFollow> ().setTarget (this.gameObject);
 
 //		camAudio.gameObject.SetActive (true);
+		//scaleDirection = transform.localScale;
+		//GetComponent<NetTracker> ().objectScale = sc;
+
+
 
 		GetComponent<SpriteRenderer>().color = Color.yellow;
 
@@ -116,6 +128,9 @@ public class PlayerControl : NetworkBehaviour {
 	void FixedUpdate () {
 		if (!isLocalPlayer)
 			return;
+
+
+		//transform.localScale = GetComponent<NetTracker> ().objectScale;
 
 		float moveH = Input.GetAxisRaw ("Horizontal");
 
@@ -213,9 +228,10 @@ public class PlayerControl : NetworkBehaviour {
 		//Change the direction boolean
 		facingRight = !facingRight;
 
-		Vector3 playerDirection = transform.localScale;
+		//Vector3 playerDirection = transform.localScale;
 		//Flips the players direction 
-		playerDirection.x *= -1;
-		transform.localScale = playerDirection;
+		//playerDirection.x *= -1;
+
+		netTracker.CmdFlipSprite(facingRight);
 	}
 }
