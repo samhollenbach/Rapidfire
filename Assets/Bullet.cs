@@ -32,8 +32,4 @@ public class Bullet : NetworkBehaviour {
 		this.playerSource = source;
 	}
 
-//	void damage(GameObject p) {
-//		if(!(p.GetComponent<PlayerControl>.
-//	}
-
 }

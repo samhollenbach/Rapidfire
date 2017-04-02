@@ -6,7 +6,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{5872506B-CD41-7046-E3AB-F06DBEA904EB}</ProjectGuid>
+    <ProjectGuid>{AF7FFB16-596D-FF61-4E5D-BAE8603B3D4B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -49,6 +49,7 @@
      <Compile Include="Assets\Bullet.cs" />
      <Compile Include="Assets\CameraFollow.cs" />
      <Compile Include="Assets\Gun.cs" />
+     <Compile Include="Assets\HealthBar.cs" />
      <Compile Include="Assets\NetTracker.cs" />
      <Compile Include="Assets\PlayerControl.cs" />
      <Compile Include="Assets\PlayerHealth.cs" />
@@ -74,7 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
-      <Project>{E3DB080B-45A3-463A-7EA6-39D6F3CB874C}</Project>      <Name>Assembly-CSharp-firstpass</Name>    </ProjectReference>
+      <Project>{66229C14-B34B-491E-88EA-65ACE138B9C3}</Project>      <Name>Assembly-CSharp-firstpass</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

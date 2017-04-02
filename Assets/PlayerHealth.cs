@@ -18,6 +18,9 @@ public class PlayerHealth : NetworkBehaviour {
 	public bool hurt = false;
 	public bool dead = false;
 
+	public HealthBar playerHealthBar;
+//	public GameObject player;
+
 	public GameObject Canvas;
 	private GameObject can;
 	private Canvas currentCanvas;
@@ -29,6 +32,9 @@ public class PlayerHealth : NetworkBehaviour {
 	// Use this for initialization
 	void Start () {
 		currentHP = HP;
+		playerHealthBar = this.gameObject.GetComponent<HealthBar> ();
+		playerHealthBar.maxHealth = HP;
+		playerHealthBar.currentHealth = currentHP;
 		healthSlider = GameObject.Find ("HUDCanvas/healthGUI/Slider").GetComponent<Slider>();
 		hurtImage = GameObject.Find ("HUDCanvas/Image").GetComponent<Image>();
 		healthSlider.value = currentHP;
@@ -52,6 +58,7 @@ public class PlayerHealth : NetworkBehaviour {
 		currentHP -= damage;
 		print (currentHP);
 		healthSlider.value = currentHP;
+		playerHealthBar.currentHealth = currentHP;
 		if (!dead) {
 			Death ();
 		}
@@ -61,10 +68,15 @@ public class PlayerHealth : NetworkBehaviour {
 		if (!isServer) {
 			return;
 		}
-		if (HP <= 0) {
+		if (currentHP <= 0) {
+			playerHealthBar.currentHealth = 0;
 			dead = true;
 			print (dead);
 			NetworkServer.Destroy (gameObject);
 		}
 	}
+
+//	public void setPlayer(GameObject p) {
+//		this.player = p;
+//	}
 }

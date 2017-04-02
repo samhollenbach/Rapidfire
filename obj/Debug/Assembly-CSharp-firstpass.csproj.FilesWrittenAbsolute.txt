@@ -19,3 +19,24 @@
 /Users/samhollenbach/Documents/Projects/Rapidfire/Comp225 2D Shooter/Temp/bin/Debug/Unity.CecilTools.dll
 /Users/samhollenbach/Documents/Projects/Rapidfire/Comp225 2D Shooter/Temp/bin/Debug/Mono.Cecil.Pdb.dll
 /Users/samhollenbach/Documents/Projects/Rapidfire/Comp225 2D Shooter/Temp/bin/Debug/Mono.Cecil.Mdb.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/Assembly-CSharp-firstpass.dll.mdb
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/Assembly-CSharp-firstpass.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/obj/Debug/Assembly-CSharp-firstpass.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/obj/Debug/Assembly-CSharp-firstpass.dll.mdb
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/UnityEngine.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/UnityEditor.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/UnityEngine.Analytics.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/UnityEngine.PlaymodeTestsRunner.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/UnityEngine.Networking.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/UnityEngine.UI.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/UnityEngine.HoloLens.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/UnityEngine.VR.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/Mono.Cecil.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/Unity.SerializationLogic.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/Unity.DataContract.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/ICSharpCode.NRefactory.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/Unity.UNetWeaver.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/Unity.UNetWeaver.dll.mdb
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/Unity.CecilTools.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/Mono.Cecil.Pdb.dll
+/Users/Lawson/Documents/Comp 225/Rapidfire/Temp/bin/Debug/Mono.Cecil.Mdb.dll

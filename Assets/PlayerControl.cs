@@ -52,8 +52,11 @@ public class PlayerControl : NetworkBehaviour {
 	[SyncVar]
 	public Vector3 scaleDirection;
 
-	Camera playerCam;
-	AudioListener camAudio;
+	public Camera playerCam;
+
+//	PlayerHealth playerHealth;
+
+	HealthBar playerHealthBar;
 
 	private NetTracker netTracker;
 
@@ -65,13 +68,10 @@ public class PlayerControl : NetworkBehaviour {
 	void Awake () {
 		playerCam = GetComponentInChildren<Camera> ();
 		playerCam.gameObject.SetActive (false);
-//		camAudio = GetComponentInChildren<AudioListener>();
-//		camAudio.gameObject.SetActive (false);
 	}
 
 	public override void OnStartLocalPlayer()
 	{
-
 		this.netTracker = GetComponent<NetTracker> ();
 
 		GameObject.Find("HUDCanvas").GetComponent<Canvas>();
@@ -87,6 +87,9 @@ public class PlayerControl : NetworkBehaviour {
 		//Camera.main.GetComponent<CameraFollow>().CmdSetTarget(this.gameObject);
 		playerCam.gameObject.SetActive(true);
 		playerCam.GetComponent<CameraFollow> ().setTarget (this.gameObject);
+
+		playerHealthBar.GetComponent<HealthBar> ().setPlayer (this.gameObject);
+//		playerHealth.GetComponent<PlayerHealth> ().setPlayer (this.gameObject);
 
 //		camAudio.gameObject.SetActive (true);
 		//scaleDirection = transform.localScale;
