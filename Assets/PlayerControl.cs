@@ -110,6 +110,14 @@ public class PlayerControl : NetworkBehaviour {
 		}
 
 		setMousePos(Input.mousePosition);
+
+		Vector3 mouse1 = Input.mousePosition;
+		mouse1.z = 10;
+
+		if ((playerCam.ScreenToWorldPoint(mouse1).x > transform.position.x && !facingRight) 
+			|| (playerCam.ScreenToWorldPoint(mouse1).x < transform.position.x && facingRight)) {
+			Flip ();
+		}
 		//Updates to check for the player's grounded status
 		//Grounded if linecast to groundcheck position hits anything on the ground
 		//grounded = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("ground"));
@@ -155,17 +163,14 @@ public class PlayerControl : NetworkBehaviour {
 			GetComponent<Rigidbody2D>().velocity = new Vector2(Mathf.Sign(GetComponent<Rigidbody2D>().velocity.x) * maxSpeed, GetComponent<Rigidbody2D>().velocity.y);
 
 
-//		if ((Camera.main.ScreenToWorldPoint (getMousePos ()).x > transform.position.x && !facingRight) 
-//			|| (Camera.main.ScreenToWorldPoint (getMousePos ()).x < transform.position.x && facingRight)) {
-//			//Flip ();
-//		}
+
 		//If player is moving RIGHT but facing left, flip sprite
-		if(moveH > 0 && !facingRight){
-			Flip();
-		//If player is moving LEFT but facing right, flip sprite
-		}else if(moveH < 0 && facingRight){
-			Flip();
-		}
+//		if(moveH > 0 && !facingRight){
+//			Flip();
+//		//If player is moving LEFT but facing right, flip sprite
+//		}else if(moveH < 0 && facingRight){
+//			Flip();
+//		}
 		if(jump)
 		{
 			//Tells the animator when to play the jump script
@@ -191,14 +196,13 @@ public class PlayerControl : NetworkBehaviour {
 
 		Vector3 gunPos = new Vector3 (3, 0, 0);
 
-
-		if ((cursor.x < playerPos.x && player.GetComponent<PlayerControl> ().facingRight) || (cursor.x > playerPos.x && !player.GetComponent<PlayerControl> ().facingRight)) {
-			player.GetComponent<PlayerControl> ().Flip ();
-		}
-
-		if (!player.GetComponent<PlayerControl> ().facingRight) {
-			gunPos.x = -gunPos.x;
-		}
+//		if ((cursor.x < playerPos.x && player.GetComponent<PlayerControl> ().facingRight) || (cursor.x > playerPos.x && !player.GetComponent<PlayerControl> ().facingRight)) {
+//			player.GetComponent<PlayerControl> ().Flip ();
+//		}
+//
+//		if (!player.GetComponent<PlayerControl> ().facingRight) {
+//			gunPos.x = -gunPos.x;
+//		}
 
 		Vector3 bulletSpawn = cg.transform.position + gunPos;
 
@@ -208,8 +212,6 @@ public class PlayerControl : NetworkBehaviour {
 
 		cg.bullet.GetComponent<Bullet>().setSource (player);
 
-
-
 		var projectile = Instantiate(cg.bullet, bulletSpawn, Quaternion.identity);
 
 		var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
@@ -217,7 +219,6 @@ public class PlayerControl : NetworkBehaviour {
 		projectile.GetComponent<Bullet> ().playerSource = player;
 		projectile.GetComponent<Rigidbody2D>().velocity = (direction * cg.speed) * 10;
 
-		//print(player.transform.position);
 		NetworkServer.Spawn (projectile);
 	}
 
