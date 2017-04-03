@@ -107,6 +107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c40fe603824804d8b89cf09e1b0e0ddd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  netFacingRight: 1
 --- !u!114 &114950374589027888
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -119,7 +120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 1952957738258138, guid: 60b31fcf17fbd4edba64bfd0746063c1, type: 2}
-  speed: 10
+  speed: 100
   playerControl: {fileID: 114975356638089320, guid: 99d276a7ee5844765b4e471633326561,
     type: 2}
 --- !u!212 &212149445221604518

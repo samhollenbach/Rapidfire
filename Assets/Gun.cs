@@ -6,7 +6,8 @@ using UnityEngine.Networking;
 public class Gun : MonoBehaviour {
 
 	public GameObject bullet;
-	public float speed = 20f;
+
+	public float speed = 1000f;
 
 	public PlayerControl playerControl;
 	private Animator anim;

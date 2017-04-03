@@ -215,7 +215,7 @@ public class PlayerControl : NetworkBehaviour {
 		var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 		projectile.transform.rotation = Quaternion.AngleAxis (angle,Vector3.forward);
 		projectile.GetComponent<Bullet> ().playerSource = player;
-		projectile.GetComponent<Rigidbody2D>().velocity = (direction * cg.speed) * 5;
+		projectile.GetComponent<Rigidbody2D>().velocity = (direction * cg.speed) * 10;
 
 		//print(player.transform.position);
 		NetworkServer.Spawn (projectile);
