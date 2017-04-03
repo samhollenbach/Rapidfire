@@ -189,21 +189,28 @@ public class PlayerControl : NetworkBehaviour {
 
 		Vector3 cursorInWorldPos = cursor;
 
-		Vector3 direction = cursorInWorldPos - playerPos;
+		Vector3 gunPos = new Vector3 (3, 0, 0);
+
+
+		if ((cursor.x < playerPos.x && player.GetComponent<PlayerControl> ().facingRight) || (cursor.x > playerPos.x && !player.GetComponent<PlayerControl> ().facingRight)) {
+			player.GetComponent<PlayerControl> ().Flip ();
+		}
+
+		if (!player.GetComponent<PlayerControl> ().facingRight) {
+			gunPos.x = -gunPos.x;
+		}
+
+		Vector3 bulletSpawn = cg.transform.position + gunPos;
+
+		Vector3 direction = cursorInWorldPos - bulletSpawn;
 		direction.z = 0;
 		direction.Normalize();
 
 		cg.bullet.GetComponent<Bullet>().setSource (player);
 
-		if ((direction.x < 0 && player.GetComponent<PlayerControl> ().facingRight) || (direction.x > 0 && !player.GetComponent<PlayerControl> ().facingRight)) {
-			player.GetComponent<PlayerControl> ().Flip ();
-		}
-		Vector3 gunPos = new Vector3 (3, 0, 0);
-		if (!player.GetComponent<PlayerControl> ().facingRight) {
-			gunPos.x = -gunPos.x;
-		}
 
-		var projectile = Instantiate(cg.bullet, cg.transform.position + gunPos, Quaternion.identity);
+
+		var projectile = Instantiate(cg.bullet, bulletSpawn, Quaternion.identity);
 
 		var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 		projectile.transform.rotation = Quaternion.AngleAxis (angle,Vector3.forward);
