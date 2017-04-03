@@ -39,8 +39,7 @@ public class HealthBar : NetworkBehaviour{
 
 		// Draw a Health Bar
 
-//		Vector3 pos = Camera.main.WorldToScreenPoint(transform.position);
-		pos = this.gameObject.GetComponent<PlayerControl>().playerCam.WorldToScreenPoint(transform.position);
+		pos = Camera.main.WorldToScreenPoint(transform.position);
 
 		// draw health bar background
 		GUI.color = Color.grey;
