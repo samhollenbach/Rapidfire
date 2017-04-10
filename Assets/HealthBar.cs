@@ -16,6 +16,7 @@ public class HealthBar : NetworkBehaviour{
 	[SyncVar]
 	Vector3 pos;
 
+	//Set box coordinates in world space above player then conver all to screen space at the end
 
 
 //	void Start()

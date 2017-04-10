@@ -27,7 +27,7 @@ public class PlayerControl : NetworkBehaviour {
 
 	//If some other force is moving the player
 	[SyncVar]
-	public bool ungrounded = false;
+	public bool ungrounded = false; //Checks if force should be added to the player in the x direction if player is in air
 
 	//Conditions for checking whether or not the character is grounded
 	public Transform groundCheck;
@@ -35,7 +35,7 @@ public class PlayerControl : NetworkBehaviour {
 	[SyncVar]
 	private bool grounded = false;
 
-	float groundRadius = 0.2f;
+	private float groundRadius = 1.2f;
 	public LayerMask whatIsGround;
 	//Links the character to animations
 	//private Animator anim;
@@ -121,10 +121,6 @@ public class PlayerControl : NetworkBehaviour {
 		//Updates to check for the player's grounded status
 		//Grounded if linecast to groundcheck position hits anything on the ground
 		//grounded = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("ground"));
-		grounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, whatIsGround);
-		if (Input.GetButtonDown ("Jump") && grounded) {
-			jump = true;
-		}
 
 		if (Input.GetButtonDown ("Fire1")) {
 			if (gun != null) {
@@ -163,14 +159,10 @@ public class PlayerControl : NetworkBehaviour {
 			GetComponent<Rigidbody2D>().velocity = new Vector2(Mathf.Sign(GetComponent<Rigidbody2D>().velocity.x) * maxSpeed, GetComponent<Rigidbody2D>().velocity.y);
 
 
-
-		//If player is moving RIGHT but facing left, flip sprite
-//		if(moveH > 0 && !facingRight){
-//			Flip();
-//		//If player is moving LEFT but facing right, flip sprite
-//		}else if(moveH < 0 && facingRight){
-//			Flip();
-//		}
+		grounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, whatIsGround);
+		if (Input.GetButtonDown ("Jump") && grounded) {
+			jump = true;
+		}
 		if(jump)
 		{
 			//Tells the animator when to play the jump script

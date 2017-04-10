@@ -4,22 +4,18 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class Bullet : NetworkBehaviour {
-
-	public int bulletDamage = 20;
+	
+	private const int BULLET_DAMAGE = 20;
 
 	[SyncVar]
 	public GameObject playerSource;
-
-	void Start(){
-		
-	}
 		
 	void OnTriggerEnter2D(Collider2D col){
 		//Might need to use col.tag, need to fix gunscript to test
 		if (col.tag == "Player") {
 			GameObject p = col.gameObject;
 			if (p != playerSource){
-				p.GetComponent<PlayerHealth> ().Hurt (bulletDamage);
+				p.GetComponent<PlayerHealth> ().Hurt (BULLET_DAMAGE);
 				NetworkServer.Destroy (gameObject);
 			}
 		} else if (col.tag == "ground") {
