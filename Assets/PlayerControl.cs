@@ -6,148 +6,125 @@ using UnityEngine.Networking;
 
 public class PlayerControl : NetworkBehaviour {
 
-
+	//Standard player movement constants
 	//Will have to play with these numbers
 	public float maxSpeed = 50f;
 	public float moveForce = 900f;
 	public float jumpForce = 5000f;
 
-	[SyncVar]
-	public int HP = 100;
-
-	[SyncVar]
-	public bool dead = false;
-
 	//Conditions for direction faced and ability to jump
 	[SyncVar]
-	bool facingRight = true;
+	public bool facingRight = true;
 
 	[SyncVar]
-	bool jump = false;
+	private bool jump = false;
 
 	//If some other force is moving the player
 	[SyncVar]
 	public bool ungrounded = false; //Checks if force should be added to the player in the x direction if player is in air
 
 	//Conditions for checking whether or not the character is grounded
-	public Transform groundCheck;
+	private Transform groundCheck;
 
-	[SyncVar]
+	//Checks if the player is on the ground
 	private bool grounded = false;
 
 	private float groundRadius = 1.2f;
+
+	//Determines what player can stand on
 	public LayerMask whatIsGround;
+
 	//Links the character to animations
 	//private Animator anim;
 
+	//Stores the player gun object
 	public Transform gun;
 
+	//Stores player mouse position
+	private Vector3 mousePos;
 
-	//[SyncVar]
-	public Vector3 mousePos;
+	//Stores the object of the players camera
+	private Camera playerCam;
 
-	[SyncVar]
-	private GameObject playerGun;
+	//Keeps track of the players health bar
+	private HealthBar playerHealthBar;
 
-	[SyncVar]
-	public Vector3 scaleDirection;
-
-	public Camera playerCam;
-
-//	PlayerHealth playerHealth;
-
-	HealthBar playerHealthBar;
-
+	//NetTracker keeps track of some extra player variables on the network
 	private NetTracker netTracker;
 
 
-	/// <summary>
-	/// Start this instance.
-	/// </summary>
-	// Use this for initialization
+	// This method is run as soon as the script is compiled
 	void Awake () {
 		playerCam = GetComponentInChildren<Camera> ();
 		playerCam.gameObject.SetActive (false);
 	}
 
-	public override void OnStartLocalPlayer()
-	{
+	//This method is called when the player object is created in the world
+	//Only runs on the local client and not the server
+	public override void OnStartLocalPlayer(){
+		//Initializes a NetTracker object to store networked variables
 		this.netTracker = GetComponent<NetTracker> ();
 
+		//Initializes HUDCanvas object for showing Health Bars
 		GameObject.Find("HUDCanvas").GetComponent<Canvas>();
 
+		//Initializes object to check if player is on the ground
 		groundCheck = transform.Find("groundCheck");
 
+		//Initializes master animation object
 		//anim = GetComponent<Animator>();
-		gun = transform.Find ("Gun");
-		//Vector3 gunSpawnPosition = transform.position + new Vector3 (2,5,0);
-		//playerGun = (GameObject)Instantiate (gun.gameObject, gunSpawnPosition, Quaternion.identity);
-		//currentGun.GetComponent<Gun>().playerControl = this;
 
-		//Camera.main.GetComponent<CameraFollow>().CmdSetTarget(this.gameObject);
+		//Gets the gun component attached to the player
+		gun = transform.Find ("Gun");
+
+		//Activates this players camera
 		playerCam.gameObject.SetActive(true);
+		//Links the camera to this player
 		playerCam.GetComponent<CameraFollow> ().setTarget (this.gameObject);
 
+		//Links a health bar object to this player
 		playerHealthBar.GetComponent<HealthBar> ().setPlayer (this.gameObject);
-//		playerHealth.GetComponent<PlayerHealth> ().setPlayer (this.gameObject);
 
-//		camAudio.gameObject.SetActive (true);
-		//scaleDirection = transform.localScale;
-		//GetComponent<NetTracker> ().objectScale = sc;
-
-
-
+		//Color sprite yellow to tell difference between  players
 		GetComponent<SpriteRenderer>().color = Color.yellow;
 
 	}
 
 
-	// Update is called once per frame
+	//Update is called on every action or input that takes place
 	void Update() {
+		//Makes sure the updates are only being made on the local client
 		if (!isLocalPlayer) {
-			
 			return;
 		}
 
-		setMousePos(Input.mousePosition);
-
+		//Gets the current mouse position on the screen
+		//Must set the z axis =/= 0 to use ScreenToWorldPoint
 		Vector3 mouse1 = Input.mousePosition;
 		mouse1.z = 10;
+		//Sets the current mouse position for other methods to use
+		setMousePos (mouse1);
 
-		if ((playerCam.ScreenToWorldPoint(mouse1).x > transform.position.x && !facingRight) 
-			|| (playerCam.ScreenToWorldPoint(mouse1).x < transform.position.x && facingRight)) {
-			Flip ();
-		}
-		//Updates to check for the player's grounded status
-		//Grounded if linecast to groundcheck position hits anything on the ground
-		//grounded = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("ground"));
+		//Flips the player orientation if the mouse is on the other side
+		checkFlip ();
 
-		if (Input.GetButtonDown ("Fire1")) {
-			if (gun != null) {
-				Vector3 mouse = Input.mousePosition;
-				mouse.z = 10;
-				CmdFire (this.gameObject, playerCam.ScreenToWorldPoint(mouse));
-			}
-		}
+		//Checks the fire input and runs the CmdFire method
+		checkFire();
+
+		//Checks horizontal inputs and applies movements
+		applyHorizontalMovement ();
+
+		//Checks jump input and applies jump if grounded
+		checkJump ();
 	}
 
-
-	void FixedUpdate () {
-		if (!isLocalPlayer)
-			return;
-
-
-		//transform.localScale = GetComponent<NetTracker> ().objectScale;
-
+	//Checks what inputs are down and applies horizontal movement
+	void applyHorizontalMovement(){
 		float moveH = Input.GetAxisRaw ("Horizontal");
 
 		if (!ungrounded && moveH == 0) {
 			GetComponent<Rigidbody2D>().velocity = new Vector2(0, GetComponent<Rigidbody2D>().velocity.y);
 		}
-
-		// The Speed animator parameter is set to the absolute value of the horizontal input.
-		//anim.SetFloat("Speed", Mathf.Abs(moveH));
-
 		//If horizontal velocity is < maxspeed
 		if(moveH * GetComponent<Rigidbody2D>().velocity.x < maxSpeed)
 			//increase horizontal velocity by adding a force to player
@@ -157,84 +134,107 @@ public class PlayerControl : NetworkBehaviour {
 		if(Mathf.Abs(GetComponent<Rigidbody2D>().velocity.x) > maxSpeed)
 			//set horizontal velocity to maxspeed
 			GetComponent<Rigidbody2D>().velocity = new Vector2(Mathf.Sign(GetComponent<Rigidbody2D>().velocity.x) * maxSpeed, GetComponent<Rigidbody2D>().velocity.y);
+		
+	}
 
-
+	//Checks if the player is on the ground and calls jump
+	void checkJump(){
 		grounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, whatIsGround);
 		if (Input.GetButtonDown ("Jump") && grounded) {
-			jump = true;
-		}
-		if(jump)
-		{
-			//Tells the animator when to play the jump script
-			//anim.SetTrigger("Jump");
-
-			//Adds vertical jump force to the player
-			//Left parameter is x direction force
-			GetComponent<Rigidbody2D>().AddForce(new Vector2(0f, jumpForce));
-
-			// Reset jump to ensure player can't jump again unless jump condition is satisfied
-			jump = false;
+			applyJump ();
 		}
 	}
-		
+
+	//Applies the jump force to the player
+	void applyJump(){
+
+		//Adds for vector upwards to player
+		GetComponent<Rigidbody2D>().AddForce(new Vector2(0f, jumpForce));
+
+		// Reset jump to ensure player can't jump again unless jump condition is satisfied (NOT CURRENTLY IN USE)
+		jump = false;
+
+	}
+
+	//Command methods are run on the server but called on the client. This method instantiates a bullet object from the
+	//referenced player's gun in the direction that their mouse is facing and uses NetworkServer.Spawn to spawn
+	//the bullet on the server
 	[Command]
 	void CmdFire(GameObject player, Vector3 cursor){
 
+		//Get the players gun object
 		Gun cg = player.GetComponentInChildren<Gun> ();
 
-		Vector3 playerPos = player.transform.position + new Vector3 (2,5,0);
-
-		Vector3 cursorInWorldPos = cursor;
-
+		//Gets the gun position relative to the players body and flips position depending on which way the gun is facing
 		Vector3 gunPos = new Vector3 (3, 0, 0);
+		if (player.GetComponent<PlayerControl> ().facingRight) {
+			gunPos.x *= -1;
+		}
 
-//		if ((cursor.x < playerPos.x && player.GetComponent<PlayerControl> ().facingRight) || (cursor.x > playerPos.x && !player.GetComponent<PlayerControl> ().facingRight)) {
-//			player.GetComponent<PlayerControl> ().Flip ();
-//		}
-//
-//		if (!player.GetComponent<PlayerControl> ().facingRight) {
-//			gunPos.x = -gunPos.x;
-//		}
-
+		//Creates the position for the bullet to spawn from
 		Vector3 bulletSpawn = cg.transform.position + gunPos;
 
-		Vector3 direction = cursorInWorldPos - bulletSpawn;
+		//Creates the direction vector on which the bullet will travel and normalizes it
+		Vector3 direction = cursor - bulletSpawn;
 		direction.z = 0;
 		direction.Normalize();
 
-		cg.bullet.GetComponent<Bullet>().setSource (player);
-
+		//Creates the bullet projectile
 		var projectile = Instantiate(cg.bullet, bulletSpawn, Quaternion.identity);
 
+		//Sets the angle of travel and rotation for the bullet
 		var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 		projectile.transform.rotation = Quaternion.AngleAxis (angle,Vector3.forward);
-		projectile.GetComponent<Bullet> ().playerSource = player;
+
+		//Sets the source of the bullet to this player
+		projectile.GetComponent<Bullet> ().setSource(player);
+
+		//Sets the velocity of the bullet
 		projectile.GetComponent<Rigidbody2D>().velocity = (direction * cg.speed) * 10;
 
+		//Tells the NetworkServer to spawn the bullet and keep track of it for all clients
 		NetworkServer.Spawn (projectile);
 	}
 
+	//Returns the gun that the player is currently holding
 	public Gun getCurrentGun(){
 		return(gun.GetComponent<Gun>());
 	}
 
+	//Sets the mouse position
 	private void setMousePos(Vector3 m){
 		mousePos = m;
 	}
 
+	//Returns the current position of the mouse
 	public Vector3 getMousePos(){
 		return(mousePos);
 	}
 
-
+	//Checks if the 
+	void checkFlip(){
+		if ((playerCam.ScreenToWorldPoint(getMousePos()).x > transform.position.x && !facingRight) 
+			|| (playerCam.ScreenToWorldPoint(getMousePos()).x < transform.position.x && facingRight)) {
+			Flip ();
+		}
+	}
+	//Tells the NetTracker component to switch the direction the player is facing
 	void Flip() {
-		//Change the direction boolean
 		facingRight = !facingRight;
-
-		//Vector3 playerDirection = transform.localScale;
-		//Flips the players direction 
-		//playerDirection.x *= -1;
-
 		netTracker.CmdFlipSprite(facingRight);
 	}
+
+	//Runs the fire command if the player is holding a gun and has pressed fire
+	void checkFire(){
+		if (Input.GetButtonDown ("Fire1")) {
+			if (gun != null) {
+				//Vector3 mouse = Input.mousePosition;
+				//mouse.z = 10;
+				CmdFire (this.gameObject, playerCam.ScreenToWorldPoint(getMousePos()));
+			}
+		}
+	}
+
+
+
 }
