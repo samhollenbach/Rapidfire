@@ -52,9 +52,12 @@ public class PlayerControl : NetworkBehaviour {
 	//NetTracker keeps track of some extra player variables on the network
 	private NetTracker netTracker;
 
+	private Animator anim;
 
 	// This method is run as soon as the script is compiled
 	void Awake () {
+		anim = GetComponent<Animator> ();
+
 		playerCam = GetComponentInChildren<Camera> ();
 		playerCam.gameObject.SetActive (false);
 	}
@@ -125,6 +128,9 @@ public class PlayerControl : NetworkBehaviour {
 		if (!ungrounded && moveH == 0) {
 			GetComponent<Rigidbody2D>().velocity = new Vector2(0, GetComponent<Rigidbody2D>().velocity.y);
 		}
+
+		anim.SetFloat ("Speed", Mathf.Abs(moveH));
+
 		//If horizontal velocity is < maxspeed
 		if(moveH * GetComponent<Rigidbody2D>().velocity.x < maxSpeed)
 			//increase horizontal velocity by adding a force to player
