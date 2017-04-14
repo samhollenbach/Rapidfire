@@ -54,7 +54,6 @@ public class PlayerControl : NetworkBehaviour {
 
 	private Animator anim;
 
-
 	// This method is run as soon as the script is compiled
 	void Awake () {
 		anim = GetComponent<Animator> ();
@@ -131,6 +130,7 @@ public class PlayerControl : NetworkBehaviour {
 		}
 
 		anim.SetFloat ("Speed", Mathf.Abs(moveH));
+
 		//If horizontal velocity is < maxspeed
 		if(moveH * GetComponent<Rigidbody2D>().velocity.x < maxSpeed)
 			//increase horizontal velocity by adding a force to player
