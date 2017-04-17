@@ -16,15 +16,6 @@ public class HealthBar : NetworkBehaviour{
 	[SyncVar]
 	Vector3 pos;
 
-	//Set box coordinates in world space above player then conver all to screen space at the end
-
-
-//	void Start()
-//	{
-//		maxHealth = player.GetComponent<PlayerHealth> ().HP;
-//		currentHealth = player.GetComponent<PlayerHealth> ().currentHP;
-//	}
-
 	void Update() {
 		if (player.GetComponent<PlayerHealth> ().currentHP <= 0) {
 			currentHealth = 0;

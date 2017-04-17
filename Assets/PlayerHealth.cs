@@ -11,23 +11,14 @@ public class PlayerHealth : NetworkBehaviour {
 	[SyncVar]
 	public int currentHP;
 
-	public Slider healthSlider;
 	public Image hurtImage;
 	public Color flashColor = new Color(1f, 0f, 0f, 0.1f);
 	public float flashSpeed = 5f;
-	public bool hurt = false;
-	public bool dead = false;
+
+	private bool hurt = false;
+	private bool dead = false;
 
 	public HealthBar playerHealthBar;
-//	public GameObject player;
-
-	public GameObject Canvas;
-	private GameObject can;
-	private Canvas currentCanvas;
-
-
-	//	private GameObject sl;
-	//	private Slider currentSlider;
 
 	// Use this for initialization
 	void Start () {
@@ -35,9 +26,7 @@ public class PlayerHealth : NetworkBehaviour {
 		playerHealthBar = this.gameObject.GetComponent<HealthBar> ();
 		playerHealthBar.maxHealth = HP;
 		playerHealthBar.currentHealth = currentHP;
-		healthSlider = GameObject.Find ("HUDCanvas/healthGUI/Slider").GetComponent<Slider>();
 		hurtImage = GameObject.Find ("HUDCanvas/Image").GetComponent<Image>();
-		healthSlider.value = currentHP;
 	}
 
 	// Update is called once per frame
@@ -56,8 +45,6 @@ public class PlayerHealth : NetworkBehaviour {
 		}
 		hurt = true;
 		currentHP -= damage;
-		print (currentHP);
-		healthSlider.value = currentHP;
 		playerHealthBar.currentHealth = currentHP;
 		if (!dead) {
 			Death ();
@@ -71,12 +58,7 @@ public class PlayerHealth : NetworkBehaviour {
 		if (currentHP <= 0) {
 			playerHealthBar.currentHealth = 0;
 			dead = true;
-			print (dead);
 			NetworkServer.Destroy (gameObject);
 		}
 	}
-
-//	public void setPlayer(GameObject p) {
-//		this.player = p;
-//	}
 }

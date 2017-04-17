@@ -11,28 +11,21 @@ public class Gun : MonoBehaviour {
 	//Speed at which bullet leaves gun
 	public float speed = 1000f;
 
-	//Player holding this gun
-	public PlayerControl playerControl;
+	private Transform gunTip;
 
-	//Gun animator object
-	//private Animator anim;
-
-	//Checks if the gun as already fired (for fire rate cooldown/reload)
-	//private bool fired = false;
+	private const float FIRE_RATE = 0.3f;
 
 	// Use this for initialization
 	void Start () {
-		//anim = transform.root.gameObject.GetComponent<Animator> ();
-		playerControl = transform.root.GetComponent<PlayerControl> ();
-
-	}
-
-	//Used for fire-rate and reload (NOT CURRENTLY IN USE)
-	public void fire (){
-		//fired = true;
+		gunTip = transform.Find ("gunTip");
 	}
 
 
+	public float getFireRate() {
+		return FIRE_RATE;
+	}
 
-
+	public Vector3 getGunTipPos() {
+		return gunTip.position;
+	}
 }

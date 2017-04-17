@@ -16,9 +16,6 @@ public class PlayerControl : NetworkBehaviour {
 	[SyncVar]
 	public bool facingRight = true;
 
-	[SyncVar]
-	private bool jump = false;
-
 	//If some other force is moving the player
 	[SyncVar]
 	public bool ungrounded = false; //Checks if force should be added to the player in the x direction if player is in air
@@ -29,16 +26,12 @@ public class PlayerControl : NetworkBehaviour {
 	//Checks if the player is on the ground
 	private bool grounded = false;
 
-	private float groundRadius = 1.2f;
+	private float groundRadius = 0.2f;
+
+	private float nextFire;
 
 	//Determines what player can stand on
 	public LayerMask whatIsGround;
-
-	//Links the character to animations
-	//private Animator anim;
-
-	//Stores the player gun object
-	public Transform gun;
 
 	//Stores player mouse position
 	private Vector3 mousePos;
@@ -52,11 +45,15 @@ public class PlayerControl : NetworkBehaviour {
 	//NetTracker keeps track of some extra player variables on the network
 	private NetTracker netTracker;
 
+	private Gun gun;
+
 	private Animator anim;
 
 	// This method is run as soon as the script is compiled
 	void Awake () {
 		anim = GetComponent<Animator> ();
+
+		nextFire = 0f;
 
 		playerCam = GetComponentInChildren<Camera> ();
 		playerCam.gameObject.SetActive (false);
@@ -74,22 +71,19 @@ public class PlayerControl : NetworkBehaviour {
 		//Initializes object to check if player is on the ground
 		groundCheck = transform.Find("groundCheck");
 
-		//Initializes master animation object
-		//anim = GetComponent<Animator>();
-
-		//Gets the gun component attached to the player
-		gun = transform.Find ("Gun");
-
 		//Activates this players camera
 		playerCam.gameObject.SetActive(true);
 		//Links the camera to this player
 		playerCam.GetComponent<CameraFollow> ().setTarget (this.gameObject);
 
 		//Links a health bar object to this player
-		playerHealthBar.GetComponent<HealthBar> ().setPlayer (this.gameObject);
+		playerHealthBar = GetComponent<HealthBar> ();
+		playerHealthBar.setPlayer (this.gameObject);
+
+		gun = GetComponentInChildren<Gun> ();
 
 		//Color sprite yellow to tell difference between  players
-		GetComponent<SpriteRenderer>().color = Color.yellow;
+//		GetComponent<SpriteRenderer>().color = Color.yellow;
 
 	}
 
@@ -146,20 +140,22 @@ public class PlayerControl : NetworkBehaviour {
 	//Checks if the player is on the ground and calls jump
 	void checkJump(){
 		grounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, whatIsGround);
-		if (Input.GetButtonDown ("Jump") && grounded) {
-			applyJump ();
-		}
+		//using GetButton instead of GetButtonDown
+		if (Input.GetButton ("Jump") && grounded) {
+				applyJump ();
+			}
 	}
 
 	//Applies the jump force to the player
 	void applyJump(){
 
-		//Adds for vector upwards to player
-		GetComponent<Rigidbody2D>().AddForce(new Vector2(0f, jumpForce));
-
-		// Reset jump to ensure player can't jump again unless jump condition is satisfied (NOT CURRENTLY IN USE)
-		jump = false;
-
+		//Adds force vector upwards to player
+		float y = GetComponent<Rigidbody2D> ().velocity.y;
+		if (y > 0f) {
+			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0f, jumpForce - y));
+		} else {
+			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0f, jumpForce));
+		}
 	}
 
 	//Command methods are run on the server but called on the client. This method instantiates a bullet object from the
@@ -171,14 +167,11 @@ public class PlayerControl : NetworkBehaviour {
 		//Get the players gun object
 		Gun cg = player.GetComponentInChildren<Gun> ();
 
-		//Gets the gun position relative to the players body and flips position depending on which way the gun is facing
-		Vector3 gunPos = new Vector3 (3, 0, 0);
-		if (player.GetComponent<PlayerControl> ().facingRight) {
-			gunPos.x *= -1;
-		}
+		//Gets the position of the gunTip object
+		Vector3 gunTip = cg.getGunTipPos();
 
 		//Creates the position for the bullet to spawn from
-		Vector3 bulletSpawn = cg.transform.position + gunPos;
+		Vector3 bulletSpawn = gunTip;
 
 		//Creates the direction vector on which the bullet will travel and normalizes it
 		Vector3 direction = cursor - bulletSpawn;
@@ -201,12 +194,7 @@ public class PlayerControl : NetworkBehaviour {
 		//Tells the NetworkServer to spawn the bullet and keep track of it for all clients
 		NetworkServer.Spawn (projectile);
 	}
-
-	//Returns the gun that the player is currently holding
-	public Gun getCurrentGun(){
-		return(gun.GetComponent<Gun>());
-	}
-
+		
 	//Sets the mouse position
 	private void setMousePos(Vector3 m){
 		mousePos = m;
@@ -230,17 +218,11 @@ public class PlayerControl : NetworkBehaviour {
 		netTracker.CmdFlipSprite(facingRight);
 	}
 
-	//Runs the fire command if the player is holding a gun and has pressed fire
+	//Runs the fire command if the player has pressed fire
 	void checkFire(){
-		if (Input.GetButtonDown ("Fire1")) {
-			if (gun != null) {
-				//Vector3 mouse = Input.mousePosition;
-				//mouse.z = 10;
-				CmdFire (this.gameObject, playerCam.ScreenToWorldPoint(getMousePos()));
-			}
+		if (Time.time > nextFire && Input.GetButton ("Fire1")) {
+			CmdFire (this.gameObject, playerCam.ScreenToWorldPoint(getMousePos()));
+			nextFire = Time.time + gun.getFireRate();
 		}
 	}
-
-
-
 }
