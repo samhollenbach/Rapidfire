@@ -121,8 +121,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bullet: {fileID: 1952957738258138, guid: 60b31fcf17fbd4edba64bfd0746063c1, type: 2}
   speed: 100
-  playerControl: {fileID: 114975356638089320, guid: 99d276a7ee5844765b4e471633326561,
-    type: 2}
 --- !u!212 &212149445221604518
 SpriteRenderer:
   m_ObjectHideFlags: 1

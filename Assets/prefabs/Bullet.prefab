@@ -90,7 +90,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa89e23e233ca4dc5bc99d8436f2174e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletDamage: 20
   playerSource: {fileID: 1912087344153098, guid: 99d276a7ee5844765b4e471633326561,
     type: 2}
 --- !u!114 &114910838199806914
