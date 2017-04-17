@@ -149,6 +149,7 @@ public class PlayerControl : NetworkBehaviour {
 	//Applies the jump force to the player
 	void applyJump(){
 
+		anim.SetTrigger ("Jump");
 		//Adds force vector upwards to player
 		float y = GetComponent<Rigidbody2D> ().velocity.y;
 		if (y > 0f) {
