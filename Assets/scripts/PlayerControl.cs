@@ -17,8 +17,7 @@ public class PlayerControl : NetworkBehaviour {
 	public bool facingRight = true;
 
 	//If some other force is moving the player
-	[SyncVar]
-	public bool ungrounded = false; //Checks if force should be added to the player in the x direction if player is in air
+	private bool ungrounded = false; //Checks if force should be added to the player in the x direction if player is in air
 
 	//Conditions for checking whether or not the character is grounded
 	private Transform groundCheck;
