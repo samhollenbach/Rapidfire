@@ -18,6 +18,8 @@ public class PlayerHealth : NetworkBehaviour {
 	private bool hurt = false;
 	private bool dead = false;
 
+	private Animator anim;
+
 	public HealthBar playerHealthBar;
 
 	// Use this for initialization
@@ -27,6 +29,8 @@ public class PlayerHealth : NetworkBehaviour {
 		playerHealthBar.maxHealth = HP;
 		playerHealthBar.currentHealth = currentHP;
 		hurtImage = GameObject.Find ("HUDCanvas/Image").GetComponent<Image>();
+
+		anim = GetComponent<Animator> ();
 	}
 
 	// Update is called once per frame
@@ -58,7 +62,9 @@ public class PlayerHealth : NetworkBehaviour {
 		if (currentHP <= 0) {
 			playerHealthBar.currentHealth = 0;
 			dead = true;
-			NetworkServer.Destroy (gameObject);
+
+			anim.SetTrigger ("Death");
+			//NetworkServer.Destroy (gameObject);
 		}
 	}
 }
