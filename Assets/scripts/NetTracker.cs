@@ -5,51 +5,35 @@ using UnityEngine.Networking;
 
 public class NetTracker : NetworkBehaviour {
 
-	//Hook calls the FacingCallback function whenever netFacingRight is changed
-	[SyncVar(hook = "FacingCallback")]
+	//Synvs facingRight to the server
+	[SyncVar]
 	public bool netFacingRight = true;
 
 
 	//Command runs on the server and tells the facing right variable to change
 	[Command]
-	public void CmdFlipSprite(bool facing)
+	public void CmdFlipSprite(GameObject player, bool facing)
 	{
-		//Tells the sprite to flip directions depending on which directions the player is facing
-		netFacingRight = facing;
-		if (netFacingRight)
-		{
-			Vector3 SpriteScale = transform.localScale;
-			float scaleX = SpriteScale.x;
-			SpriteScale.x = Mathf.Abs(scaleX);
-			transform.localScale = SpriteScale;
-		}
-		else
-		{
-			Vector3 SpriteScale = transform.localScale;
-			float scaleX = SpriteScale.x;
-			SpriteScale.x = -Mathf.Abs(scaleX);
-			transform.localScale = SpriteScale;
-		}
+		//netFacingRight = facing;
+		RpcFacingCallback(player, facing);
 	}
 
 	//The callback function makes the facingRight change to all clients
-	void FacingCallback(bool facing)
+	[ClientRpc]
+	void RpcFacingCallback(GameObject player, bool facing)
 	{
 		//Does same as CmdFlipSprite but runs on the clients
-		netFacingRight = facing;
-		if (netFacingRight)
-		{
-			Vector3 SpriteScale = transform.localScale;
-			float scaleX = SpriteScale.x;
-			SpriteScale.x = Mathf.Abs(scaleX);
-			transform.localScale = SpriteScale;
-		}
-		else
-		{
-			Vector3 SpriteScale = transform.localScale;
-			float scaleX = SpriteScale.x;
-			SpriteScale.x = -Mathf.Abs(scaleX);
-			transform.localScale = SpriteScale;
-		}
+		PlayerControl playerControl = player.GetComponent<PlayerControl>();
+		player.GetComponent<NetTracker>().netFacingRight = facing;
+		Vector3 playerLocalScale = player.transform.localScale;
+
+		//If facing right, scale sprite right and vice versa
+		float tempX = netFacingRight ? Mathf.Abs(playerLocalScale.x) : -Mathf.Abs(playerLocalScale.x);
+
+		//Set sprite scale
+		player.transform.localScale = new Vector3 (tempX, playerLocalScale.y, playerLocalScale.z);
+
+		//Force camera to reset lock after changing scale
+		playerControl.playerCam.GetComponent<CameraFollow>().lockCamera();
 	}
 }

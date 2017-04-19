@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,7 +14,7 @@ public class PlayerControl : NetworkBehaviour {
 	public float jumpForce = 5000f;
 
 	//Conditions for direction faced and ability to jump
-	[SyncVar]
+	//[SyncVar]
 	public bool facingRight = true;
 
 	//If some other force is moving the player
@@ -33,16 +34,17 @@ public class PlayerControl : NetworkBehaviour {
 	public LayerMask whatIsGround;
 
 	//Stores player mouse position
+	[SyncVar]
 	private Vector3 mousePos;
 
 	//Stores the object of the players camera
-	private Camera playerCam;
+	public Camera playerCam;
 
 	//Keeps track of the players health bar
 	private HealthBar playerHealthBar;
 
 	//NetTracker keeps track of some extra player variables on the network
-	private NetTracker netTracker;
+	public NetTracker netTracker;
 
 	private Gun gun;
 
@@ -50,9 +52,13 @@ public class PlayerControl : NetworkBehaviour {
 
 	// This method is run as soon as the script is compiled
 	void Awake () {
+
+		Application.runInBackground = true;
 		anim = GetComponent<Animator> ();
 
 		nextFire = 0f;
+
+		Debug.developerConsoleVisible = true;
 
 		playerCam = GetComponentInChildren<Camera> ();
 		playerCam.gameObject.SetActive (false);
@@ -86,23 +92,40 @@ public class PlayerControl : NetworkBehaviour {
 
 	}
 
-
 	//Update is called on every action or input that takes place
 	void Update() {
 		//Makes sure the updates are only being made on the local client
 		if (!isLocalPlayer) {
 			return;
 		}
-
+			
+		Vector3 mousePosition = new Vector3 (0, 0, 0);
+		bool mouseNull = false;
 		//Gets the current mouse position on the screen
 		//Must set the z axis =/= 0 to use ScreenToWorldPoint
-		Vector3 mouse1 = Input.mousePosition;
-		mouse1.z = 10;
-		//Sets the current mouse position for other methods to use
-		setMousePos (mouse1);
+		try{
+			mousePosition = Input.mousePosition;
+			//print("SPOOKY2");
+			//print(mousePosition);
+			//Flips the player orientation if the mouse is on the other side
 
-		//Flips the player orientation if the mouse is on the other side
-		checkFlip ();
+		}
+		catch(Exception e){
+			mouseNull = true;
+			//print (e);
+			//print ("OMG");
+		}
+			
+
+		mousePosition.z = 10;
+		//Debug.Log (mousePosition);
+		//Sets the current mouse position for other methods to use
+		setMousePos (mousePosition);
+
+		if (!mouseNull) {
+			checkFlip (this.gameObject, playerCam.ScreenToWorldPoint(getMousePos()));
+		}
+
 
 		//Checks the fire input and runs the CmdFire method
 		checkFire();
@@ -205,17 +228,20 @@ public class PlayerControl : NetworkBehaviour {
 		return(mousePos);
 	}
 
-	//Checks if the 
-	void checkFlip(){
-		if ((playerCam.ScreenToWorldPoint(getMousePos()).x > transform.position.x && !facingRight) 
-			|| (playerCam.ScreenToWorldPoint(getMousePos()).x < transform.position.x && facingRight)) {
-			Flip ();
+	//Checks if the the player should flip its sprite direction
+	void checkFlip(GameObject player, Vector3 mouse){
+
+		if ((mouse.x > player.transform.position.x && !player.GetComponent<PlayerControl>().facingRight) 
+			|| (mouse.x < player.transform.position.x && player.GetComponent<PlayerControl>().facingRight)) {
+			player.GetComponent<PlayerControl>().Flip (player);
 		}
+
 	}
 	//Tells the NetTracker component to switch the direction the player is facing
-	void Flip() {
+	void Flip(GameObject player) {
 		facingRight = !facingRight;
-		netTracker.CmdFlipSprite(facingRight);
+		//print (facingRight);
+		netTracker.CmdFlipSprite(this.gameObject, facingRight);
 	}
 
 	//Runs the fire command if the player has pressed fire
