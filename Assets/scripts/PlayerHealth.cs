@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : NetworkBehaviour {
 
@@ -64,6 +65,10 @@ public class PlayerHealth : NetworkBehaviour {
 			dead = true;
 
 			anim.SetTrigger ("Death");
+
+			//WaitForSeconds (5.0f);
+
+			SceneManager.LoadScene (3);
 			//NetworkServer.Destroy (gameObject);
 		}
 	}
