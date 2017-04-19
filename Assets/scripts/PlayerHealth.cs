@@ -67,13 +67,11 @@ public class PlayerHealth : NetworkBehaviour {
 			anim.SetTrigger ("Death");
 
 			//WaitForSeconds (5.0f);
-			RPCDeath();
-			//SceneManager.LoadScene (3);
-			//NetworkServer.Destroy (gameObject);
+			RpcDeath();
 		}
 	}
 	[ClientRpc]
-	public void RPCDeath() {
+	public void RpcDeath() {
 		SceneManager.LoadScene (3);
 	}
 }
