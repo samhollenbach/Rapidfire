@@ -50,6 +50,8 @@ public class PlayerControl : NetworkBehaviour {
 
 	private Animator anim;
 
+	private bool jumped = false;
+
 	// This method is run as soon as the script is compiled
 	void Awake () {
 
@@ -163,22 +165,33 @@ public class PlayerControl : NetworkBehaviour {
 	void checkJump(){
 		grounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, whatIsGround);
 		//using GetButton instead of GetButtonDown
-		if (Input.GetButton ("Jump") && grounded) {
-				applyJump ();
-			}
+		if (Input.GetButton ("Jump") && grounded && !jumped) {
+				
+			StartCoroutine(applyJump ());
+		}
 	}
 
 	//Applies the jump force to the player
-	void applyJump(){
+	IEnumerator applyJump(){
+
 
 		anim.SetTrigger ("Jump");
 		//Adds force vector upwards to player
-		float y = GetComponent<Rigidbody2D> ().velocity.y;
-		if (y > 0f) {
-			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0f, jumpForce - y));
-		} else {
-			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0f, jumpForce));
-		}
+		//float y = GetComponent<Rigidbody2D> ().velocity.y;
+		GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0f, jumpForce));
+		//print (jumped);
+		jumped = true;
+		print (jumped);
+		yield return new WaitForSeconds(0.15f);
+		jumped = false;
+
+
+
+//		if (y > 0f) {
+//			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0f, jumpForce - y));
+//		} else {
+//			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0f, jumpForce));
+//		}
 	}
 
 	//Command methods are run on the server but called on the client. This method instantiates a bullet object from the
