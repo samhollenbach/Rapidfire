@@ -119,6 +119,7 @@ public class PlayerControl : NetworkBehaviour {
 			return;
 		}
 			
+		//Instantiates a zero vector for the mouse
 		Vector3 mousePosition = new Vector3 (0, 0, 0);
 		bool mouseNull = false;
 
@@ -127,6 +128,7 @@ public class PlayerControl : NetworkBehaviour {
 			mousePosition = Input.mousePosition;
 		}
 		catch(Exception e){
+			//If the mouse position cannot be set, set mouse to null
 			mouseNull = true;
 			print (e);
 		}
