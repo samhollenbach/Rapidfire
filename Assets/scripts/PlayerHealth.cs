@@ -40,9 +40,11 @@ public class PlayerHealth : NetworkBehaviour {
 		anim = GetComponent<Animator> ();
 		netAnim = plyrControl.netAnim;
 
+		print (netAnim);
+
 		print (netAnim.GetParameterAutoSend (2));
 
-//		netAnim.SetParameterAutoSend (2, true);
+		netAnim.SetParameterAutoSend (2, true);
 	}
 
 	// Update is called once per frame
