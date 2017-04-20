@@ -50,7 +50,7 @@ public class PlayerControl : NetworkBehaviour {
 
 	private Animator anim;
 
-	private NetworkAnimator netAnim;
+	public NetworkAnimator netAnim;
 
 	private bool jumped = false;
 
@@ -99,7 +99,7 @@ public class PlayerControl : NetworkBehaviour {
 		netAnim = GetComponent<NetworkAnimator> ();
 		netAnim.SetParameterAutoSend (0, true);
 		netAnim.SetParameterAutoSend (1, true);
-		//netAnim.SetParameterAutoSend (2, true);
+		netAnim.SetParameterAutoSend (2, true);
 
 
 		//Must force a flip call a fraction of a second after starting the game or else the client 
