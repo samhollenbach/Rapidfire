@@ -14,7 +14,6 @@ public class NetTracker : NetworkBehaviour {
 	[Command]
 	public void CmdFlipSprite(GameObject player, bool facing)
 	{
-		print ("Do");
 		//The server calls back the flip to run on all the clients
 		RpcFacingCallback(player, facing);
 	}
@@ -23,7 +22,6 @@ public class NetTracker : NetworkBehaviour {
 	[ClientRpc]
 	void RpcFacingCallback(GameObject player, bool facing)
 	{
-		print ("Do2");
 		//Stores the player control component for use below
 		PlayerControl playerControl = player.GetComponent<PlayerControl>();
 
