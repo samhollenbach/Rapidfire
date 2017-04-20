@@ -14,7 +14,8 @@ public class NetTracker : NetworkBehaviour {
 	[Command]
 	public void CmdFlipSprite(GameObject player, bool facing)
 	{
-		//netFacingRight = facing;
+		print ("Do");
+		//The server calls back the flip to run on all the clients
 		RpcFacingCallback(player, facing);
 	}
 
@@ -22,9 +23,14 @@ public class NetTracker : NetworkBehaviour {
 	[ClientRpc]
 	void RpcFacingCallback(GameObject player, bool facing)
 	{
-		//Does same as CmdFlipSprite but runs on the clients
+		print ("Do2");
+		//Stores the player control component for use below
 		PlayerControl playerControl = player.GetComponent<PlayerControl>();
+
+		//Sets the network facing right variable
 		player.GetComponent<NetTracker>().netFacingRight = facing;
+
+		//Gets the player local scale for use below
 		Vector3 playerLocalScale = player.transform.localScale;
 
 		//If facing right, scale sprite right and vice versa

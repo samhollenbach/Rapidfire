@@ -101,10 +101,16 @@ public class PlayerControl : NetworkBehaviour {
 		netAnim.SetParameterAutoSend (1, true);
 		//netAnim.SetParameterAutoSend (2, true);
 
+
+		//Must force a flip call a fraction of a second after starting the game or else the client 
+		//will not register the flip
+		StartCoroutine (forceFlip ());
+
 		//Color sprite yellow to tell difference between  players
 //		GetComponent<SpriteRenderer>().color = Color.yellow;
 
 	}
+
 
 	//Update is called on every action or input that takes place
 	void Update() {
@@ -115,22 +121,17 @@ public class PlayerControl : NetworkBehaviour {
 			
 		Vector3 mousePosition = new Vector3 (0, 0, 0);
 		bool mouseNull = false;
-		//Gets the current mouse position on the screen
-		//Must set the z axis =/= 0 to use ScreenToWorldPoint
+
+		//Tries to get the current mouse position on the screen
 		try{
 			mousePosition = Input.mousePosition;
-			//print("SPOOKY2");
-			//print(mousePosition);
-			//Flips the player orientation if the mouse is on the other side
-
 		}
 		catch(Exception e){
 			mouseNull = true;
-			//print (e);
-			//print ("OMG");
+			print (e);
 		}
 			
-
+		//Must set the z axis =/= 0 to use ScreenToWorldPoint
 		mousePosition.z = 10;
 		//Debug.Log (mousePosition);
 		//Sets the current mouse position for other methods to use
@@ -158,20 +159,22 @@ public class PlayerControl : NetworkBehaviour {
 	void applyHorizontalMovement(){
 		float moveH = Input.GetAxisRaw ("Horizontal");
 
+		//If the player is on the ground and there is not horizontal movement, set x axis velocity to zero
 		if (!ungrounded && moveH == 0) {
 			GetComponent<Rigidbody2D>().velocity = new Vector2(0, GetComponent<Rigidbody2D>().velocity.y);
 		}
 
+		//Sets the speed of the movement animation
 		anim.SetFloat ("Speed", Mathf.Abs(moveH));
 
 		//If horizontal velocity is < maxspeed
 		if(moveH * GetComponent<Rigidbody2D>().velocity.x < maxSpeed)
-			//increase horizontal velocity by adding a force to player
+			//Increase horizontal velocity by adding a force to player
 			GetComponent<Rigidbody2D>().AddForce(Vector2.right * moveH * moveForce);
 
 		// If horizontal velocity > maxspeed
 		if(Mathf.Abs(GetComponent<Rigidbody2D>().velocity.x) > maxSpeed)
-			//set horizontal velocity to maxspeed
+			//Set horizontal velocity to maxspeed
 			GetComponent<Rigidbody2D>().velocity = new Vector2(Mathf.Sign(GetComponent<Rigidbody2D>().velocity.x) * maxSpeed, GetComponent<Rigidbody2D>().velocity.y);
 		
 	}
@@ -179,9 +182,9 @@ public class PlayerControl : NetworkBehaviour {
 	//Checks if the player is on the ground and calls jump
 	void checkJump(){
 		grounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, whatIsGround);
-		//using GetButton instead of GetButtonDown
+		//Using GetButton instead of GetButtonDown
 		if (Input.GetButton ("Jump") && grounded && !jumped) {
-				
+			//Runs the jump process with a coroutine so the IEnumerator can run the timer to reset jump	(inefficient)
 			StartCoroutine(applyJump ());
 		}
 	}
@@ -189,24 +192,52 @@ public class PlayerControl : NetworkBehaviour {
 	//Applies the jump force to the player
 	IEnumerator applyJump(){
 
-
+		//Triggers the jump animation to play
 		anim.SetTrigger ("Jump");
 		//Adds force vector upwards to player
-		//float y = GetComponent<Rigidbody2D> ().velocity.y;
 		GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0f, jumpForce));
-		//print (jumped);
+
+		//Sets a timer so the player cannot jump again for .01s
 		jumped = true;
-		//print (jumped);
 		yield return new WaitForSeconds(0.01f);
 		jumped = false;
+	}
+
+	//Checks if the the player should flip its sprite direction
+	void checkFlip(GameObject player, Vector3 mouse){
+		bool mouseRight = true;
+		//If mouse is actually to the left of the player then set mouseRight to false
+		if(mouse.x < player.transform.position.x) {
+			mouseRight = false;
+		}
+		//If the mouse is on the wrong side of the player then flip the player
+		if (mouseRight != facingRight) {
+			Flip (player, mouseRight);
+		}
+
+	}
+	//Tells the NetTracker component to switch the direction the player is facing
+	void Flip(GameObject player, bool facing) {
+		//Sets the client facing varibale
+		facingRight = facing;
+		//Tells the server to flip this player
+		netTracker.CmdFlipSprite(this.gameObject, facingRight);
+	}
+
+	//Forces the player to flip when the game starts after .05s
+	IEnumerator forceFlip(){
+		yield return new WaitForSeconds(0.05f);
+		checkFlip (this.gameObject, getMousePos ());
+
+	}
 
 
-
-//		if (y > 0f) {
-//			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0f, jumpForce - y));
-//		} else {
-//			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0f, jumpForce));
-//		}
+	//Runs the fire command if the player has pressed fire
+	void checkFire(){
+		if (Time.time > nextFire && Input.GetButton ("Fire1")) {
+			CmdFire (this.gameObject, playerCam.ScreenToWorldPoint(getMousePos()));
+			nextFire = Time.time + gun.getFireRate();
+		}
 	}
 
 	//Command methods are run on the server but called on the client. This method instantiates a bullet object from the
@@ -245,7 +276,13 @@ public class PlayerControl : NetworkBehaviour {
 		//Tells the NetworkServer to spawn the bullet and keep track of it for all clients
 		NetworkServer.Spawn (projectile);
 	}
-		
+
+
+	//Sets the player unable to move
+	public void setCanMove(bool canMove) {
+		this.canMove = canMove;
+	}
+
 	//Sets the mouse position
 	private void setMousePos(Vector3 m){
 		mousePos = m;
@@ -256,31 +293,4 @@ public class PlayerControl : NetworkBehaviour {
 		return(mousePos);
 	}
 
-	//Checks if the the player should flip its sprite direction
-	void checkFlip(GameObject player, Vector3 mouse){
-
-		if ((mouse.x > player.transform.position.x && !player.GetComponent<PlayerControl>().facingRight) 
-			|| (mouse.x < player.transform.position.x && player.GetComponent<PlayerControl>().facingRight)) {
-			player.GetComponent<PlayerControl>().Flip (player);
-		}
-
-	}
-	//Tells the NetTracker component to switch the direction the player is facing
-	void Flip(GameObject player) {
-		facingRight = !facingRight;
-		//print (facingRight);
-		netTracker.CmdFlipSprite(this.gameObject, facingRight);
-	}
-
-	//Runs the fire command if the player has pressed fire
-	void checkFire(){
-		if (Time.time > nextFire && Input.GetButton ("Fire1")) {
-			CmdFire (this.gameObject, playerCam.ScreenToWorldPoint(getMousePos()));
-			nextFire = Time.time + gun.getFireRate();
-		}
-	}
-
-	public void setCanMoveFalse() {
-		canMove = false;
-	}
 }

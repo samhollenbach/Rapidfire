@@ -13,3 +13,5 @@ EditorBuildSettings:
     path: Assets/Lobby.unity
   - enabled: 1
     path: Assets/RapidfireScene.unity
+  - enabled: 1
+    path: Assets/EndScene.unity

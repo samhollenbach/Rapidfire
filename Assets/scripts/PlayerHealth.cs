@@ -53,7 +53,7 @@ public class PlayerHealth : NetworkBehaviour {
 		hurt = false;
 
 		if (dead) {
-			plyrControl.setCanMoveFalse();
+			plyrControl.setCanMove(false);
 			Invoke ("RpcDeath", 5.0f);
 		}
 	}
