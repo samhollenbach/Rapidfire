@@ -50,6 +50,8 @@ public class PlayerControl : NetworkBehaviour {
 
 	private Animator anim;
 
+	private NetworkAnimator netAnim;
+
 	private bool jumped = false;
 
 	// This method is run as soon as the script is compiled
@@ -88,6 +90,11 @@ public class PlayerControl : NetworkBehaviour {
 		playerHealthBar.setPlayer (this.gameObject);
 
 		gun = GetComponentInChildren<Gun> ();
+
+		netAnim = GetComponent<NetworkAnimator> ();
+		netAnim.SetParameterAutoSend (0, true);
+		netAnim.SetParameterAutoSend (1, true);
+		netAnim.SetParameterAutoSend (2, true);
 
 		//Color sprite yellow to tell difference between  players
 //		GetComponent<SpriteRenderer>().color = Color.yellow;
@@ -181,8 +188,8 @@ public class PlayerControl : NetworkBehaviour {
 		GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0f, jumpForce));
 		//print (jumped);
 		jumped = true;
-		print (jumped);
-		yield return new WaitForSeconds(0.15f);
+		//print (jumped);
+		yield return new WaitForSeconds(0.01f);
 		jumped = false;
 
 

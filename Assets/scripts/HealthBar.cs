@@ -11,10 +11,18 @@ public class HealthBar : NetworkBehaviour{
 	public GameObject player;
 	public float maxHealth;
 
+	public Renderer rend;
+//	private Vector3 max;
+
 	[SyncVar]
 	public float currentHealth;
 	[SyncVar]
 	Vector3 pos;
+
+	void Start() {
+		rend = GetComponent<SpriteRenderer> ();
+//		max = rend.bounds.max;
+	}
 
 	void Update() {
 		if (player.GetComponent<PlayerHealth> ().currentHP <= 0) {
@@ -22,6 +30,7 @@ public class HealthBar : NetworkBehaviour{
 		} else {
 			currentHealth = player.GetComponent<PlayerHealth> ().currentHP;
 		}
+//		max = rend.bounds.max;
 	}
 
 
@@ -32,11 +41,13 @@ public class HealthBar : NetworkBehaviour{
 		// Draw a Health Bar
 
 		pos = Camera.main.WorldToScreenPoint(transform.position);
-
+		//print (rend.bounds.size.y);
+		//rend.bounds.extents.y
+		//46
 		// draw health bar background
 		GUI.color = Color.grey;
 		GUI.backgroundColor = Color.grey;
-		GUI.Box(new Rect(pos.x-26, Screen.height - pos.y - 45, maxHealth/2, 7), ".", backStyle);
+		GUI.Box(new Rect(pos.x-26, Screen.height - pos.y - 46, maxHealth/2, 7), ".", backStyle);
 
 		// draw health bar amount
 		GUI.color = Color.green;

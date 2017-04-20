@@ -42,6 +42,10 @@ public class PlayerHealth : NetworkBehaviour {
 			hurtImage.color = Color.Lerp (hurtImage.color, Color.clear, flashSpeed * Time.deltaTime);
 		} 
 		hurt = false;
+
+		if (dead) {
+			Invoke ("RpcDeath", 5.0f);
+		}
 	}
 
 	public void Hurt(int damage) {
@@ -63,13 +67,11 @@ public class PlayerHealth : NetworkBehaviour {
 		if (currentHP <= 0) {
 			playerHealthBar.currentHealth = 0;
 			dead = true;
-
 			anim.SetTrigger ("Death");
-
-			//WaitForSeconds (5.0f);
-			RpcDeath();
 		}
 	}
+
+
 	[ClientRpc]
 	public void RpcDeath() {
 		SceneManager.LoadScene (3);

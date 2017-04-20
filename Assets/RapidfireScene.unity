@@ -804,12 +804,12 @@ Prefab:
     - target: {fileID: 224863574080561148, guid: 99d276a7ee5844765b4e471633326561,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -0.00000035762787
       objectReference: {fileID: 0}
     - target: {fileID: 224863574080561148, guid: 99d276a7ee5844765b4e471633326561,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 9
+      value: 9.19635
       objectReference: {fileID: 0}
     - target: {fileID: 224863574080561148, guid: 99d276a7ee5844765b4e471633326561,
         type: 2}
@@ -819,7 +819,7 @@ Prefab:
     - target: {fileID: 224863574080561148, guid: 99d276a7ee5844765b4e471633326561,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: 2.72
+      value: 2.74
       objectReference: {fileID: 0}
     - target: {fileID: 224863574080561148, guid: 99d276a7ee5844765b4e471633326561,
         type: 2}
@@ -849,12 +849,7 @@ Prefab:
     - target: {fileID: 224863574080561148, guid: 99d276a7ee5844765b4e471633326561,
         type: 2}
       propertyPath: m_Pivot.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 224863574080561148, guid: 99d276a7ee5844765b4e471633326561,
-        type: 2}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: 0.5179818
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 99d276a7ee5844765b4e471633326561, type: 2}
