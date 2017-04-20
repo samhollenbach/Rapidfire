@@ -55,7 +55,8 @@ public class PlayerHealth : NetworkBehaviour {
 		if (dead) {
 			plyrControl.setCanMove(false);
 			//Invoke ("RpcDeath", 5.0f);
-			RpcDeath();
+//			RpcDeath();
+			waitForDeath();
 		}
 	}
 
@@ -83,6 +84,10 @@ public class PlayerHealth : NetworkBehaviour {
 		}
 	}
 
+	IEnumerator waitForDeath () {
+		yield return new WaitForSeconds(0.01f);
+		RpcDeath ();
+	}
 
 	[ClientRpc]
 	public void RpcDeath() {
