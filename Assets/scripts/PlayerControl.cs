@@ -54,6 +54,9 @@ public class PlayerControl : NetworkBehaviour {
 
 	private bool jumped = false;
 
+	[SyncVar]
+	public bool canMove;
+
 	// This method is run as soon as the script is compiled
 	void Awake () {
 
@@ -61,6 +64,8 @@ public class PlayerControl : NetworkBehaviour {
 		anim = GetComponent<Animator> ();
 
 		nextFire = 0f;
+
+		canMove = true;
 
 		Debug.developerConsoleVisible = true;
 
@@ -94,7 +99,7 @@ public class PlayerControl : NetworkBehaviour {
 		netAnim = GetComponent<NetworkAnimator> ();
 		netAnim.SetParameterAutoSend (0, true);
 		netAnim.SetParameterAutoSend (1, true);
-		netAnim.SetParameterAutoSend (2, true);
+		//netAnim.SetParameterAutoSend (2, true);
 
 		//Color sprite yellow to tell difference between  players
 //		GetComponent<SpriteRenderer>().color = Color.yellow;
@@ -131,19 +136,22 @@ public class PlayerControl : NetworkBehaviour {
 		//Sets the current mouse position for other methods to use
 		setMousePos (mousePosition);
 
-		if (!mouseNull) {
-			checkFlip (this.gameObject, playerCam.ScreenToWorldPoint(getMousePos()));
+
+		if (canMove) {
+			if (!mouseNull) {
+				checkFlip (this.gameObject, playerCam.ScreenToWorldPoint(getMousePos()));
+			}
+
+
+			//Checks the fire input and runs the CmdFire method
+			checkFire ();
+
+			//Checks horizontal inputs and applies movements
+			applyHorizontalMovement ();
+
+			//Checks jump input and applies jump if grounded
+			checkJump ();
 		}
-
-
-		//Checks the fire input and runs the CmdFire method
-		checkFire();
-
-		//Checks horizontal inputs and applies movements
-		applyHorizontalMovement ();
-
-		//Checks jump input and applies jump if grounded
-		checkJump ();
 	}
 
 	//Checks what inputs are down and applies horizontal movement
@@ -270,5 +278,9 @@ public class PlayerControl : NetworkBehaviour {
 			CmdFire (this.gameObject, playerCam.ScreenToWorldPoint(getMousePos()));
 			nextFire = Time.time + gun.getFireRate();
 		}
+	}
+
+	public void setCanMoveFalse() {
+		canMove = false;
 	}
 }
