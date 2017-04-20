@@ -56,6 +56,7 @@ public class PlayerHealth : NetworkBehaviour {
 			plyrControl.setCanMove(false);
 			//Invoke ("RpcDeath", 5.0f);
 //			RpcDeath();
+			anim.SetTrigger ("Death");
 			StartCoroutine(waitForDeath());
 		}
 	}
@@ -79,7 +80,7 @@ public class PlayerHealth : NetworkBehaviour {
 		if (currentHP <= 0) {
 			playerHealthBar.currentHealth = 0;
 			dead = true;
-			anim.SetTrigger ("Death");
+//			anim.SetTrigger ("Death");
 //			netAnim.SetTrigger("Death");
 		}
 	}
