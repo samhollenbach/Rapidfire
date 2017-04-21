@@ -48,7 +48,6 @@ public class PlayerControl : NetworkBehaviour {
 
 	private Gun gun;
 
-	[SyncVar]
 	private Animator anim;
 
 	public NetworkAnimator netAnim;

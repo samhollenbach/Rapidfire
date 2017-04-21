@@ -12,6 +12,7 @@ public class HealthBar : NetworkBehaviour{
 	public float maxHealth;
 
 	public Renderer rend;
+	public BoxCollider2D collider;
 //	private Vector3 max;
 
 	[SyncVar]
@@ -30,6 +31,8 @@ public class HealthBar : NetworkBehaviour{
 		} else {
 			currentHealth = player.GetComponent<PlayerHealth> ().currentHP;
 		}
+
+		collider = this.gameObject.GetComponent<BoxCollider2D> ();
 //		max = rend.bounds.max;
 	}
 
@@ -40,20 +43,22 @@ public class HealthBar : NetworkBehaviour{
 
 		// Draw a Health Bar
 
-		pos = Camera.main.WorldToScreenPoint(transform.position);
+		Vector3 HealthBarPosition = transform.position + new Vector3 (0, collider.size.y * 3.5f, 0);
+
+		pos = Camera.main.WorldToScreenPoint(HealthBarPosition);
 		//print (rend.bounds.size.y);
 		//rend.bounds.extents.y
 		//46
 		// draw health bar background
 		GUI.color = Color.grey;
 		GUI.backgroundColor = Color.grey;
-		GUI.Box(new Rect(pos.x-26, Screen.height - pos.y - 46, maxHealth/2, 7), ".", backStyle);
+		GUI.Box(new Rect(pos.x-26, Screen.height - pos.y, maxHealth/2, 7), ".", backStyle);
 
 		// draw health bar amount
 		GUI.color = Color.green;
 		GUI.backgroundColor = Color.green;
 		//20 for y
-		GUI.Box(new Rect(pos.x-25, Screen.height - pos.y - 46, currentHealth/2, 5), ".", healthStyle);
+		GUI.Box(new Rect(pos.x-25, Screen.height - pos.y, currentHealth/2, 5), ".", healthStyle);
 	}
 
 	void InitStyles()
