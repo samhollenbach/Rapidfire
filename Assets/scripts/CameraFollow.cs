@@ -35,8 +35,8 @@ public class CameraFollow : MonoBehaviour
 			}
 			if (playerTransform.position.y <= -37) {
 				y = -37;
-			} else if (playerTransform.position.y >= 37) {
-				y = 37;
+			} else if (playerTransform.position.y >= 47) {
+				y = 47;
 			} else {
 				y = playerTransform.position.y;
 			}
