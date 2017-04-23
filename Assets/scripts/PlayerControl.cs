@@ -50,8 +50,6 @@ public class PlayerControl : NetworkBehaviour {
 
 	private Animator anim;
 
-	public NetworkAnimator netAnim;
-
 	private bool jumped = false;
 
 	[SyncVar]
@@ -96,12 +94,6 @@ public class PlayerControl : NetworkBehaviour {
 
 		gun = GetComponentInChildren<Gun> ();
 
-		netAnim = GetComponent<NetworkAnimator> ();
-		netAnim.SetParameterAutoSend (0, true);
-		netAnim.SetParameterAutoSend (1, true);
-		netAnim.SetParameterAutoSend (2, true);
-
-
 		//Must force a flip call a fraction of a second after starting the game or else the client 
 		//will not register the flip
 		StartCoroutine (forceFlip ());
@@ -138,7 +130,6 @@ public class PlayerControl : NetworkBehaviour {
 		//Debug.Log (mousePosition);
 		//Sets the current mouse position for other methods to use
 		setMousePos (mousePosition);
-
 
 		if (canMove) {
 			if (!mouseNull) {

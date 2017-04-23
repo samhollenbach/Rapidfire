@@ -19,9 +19,6 @@ public class PlayerHealth : NetworkBehaviour {
 	private bool hurt = false;
 	private bool dead = false;
 
-	private Animator anim;
-	private NetworkAnimator netAnim;
-
 	private HealthBar playerHealthBar;
 	private PlayerControl plyrControl;
 
@@ -36,15 +33,6 @@ public class PlayerHealth : NetworkBehaviour {
 		plyrControl = this.gameObject.GetComponent<PlayerControl> ();
 
 		hurtImage = GameObject.Find ("HUDCanvas/Image").GetComponent<Image>();
-
-		anim = GetComponent<Animator> ();
-		netAnim = plyrControl.netAnim;
-
-		print (netAnim);
-
-		print (netAnim.GetParameterAutoSend (2));
-
-		netAnim.SetParameterAutoSend (2, true);
 	}
 
 	// Update is called once per frame
@@ -58,8 +46,6 @@ public class PlayerHealth : NetworkBehaviour {
 
 		if (dead) {
 			plyrControl.setCanMove(false);
-			//Invoke ("RpcDeath", 5.0f);
-//			RpcDeath();
 			StartCoroutine(waitForDeath());
 		}
 	}
@@ -83,8 +69,7 @@ public class PlayerHealth : NetworkBehaviour {
 		if (currentHP <= 0) {
 			playerHealthBar.currentHealth = 0;
 			dead = true;
-			anim.SetTrigger ("Death");
-//			netAnim.SetTrigger("Death");
+			RpcDeathAnimation(this.gameObject);
 		}
 	}
 
@@ -96,5 +81,9 @@ public class PlayerHealth : NetworkBehaviour {
 	[ClientRpc]
 	public void RpcDeath() {
 		SceneManager.LoadScene (3);
+	}
+	[ClientRpc]
+	public void RpcDeathAnimation(GameObject player) {
+		player.GetComponent<NetworkAnimator> ().SetTrigger ("Death");
 	}
 }
