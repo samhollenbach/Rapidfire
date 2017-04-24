@@ -46,6 +46,7 @@ public class PlayerControl : NetworkBehaviour {
 	//NetTracker keeps track of some extra player variables on the network
 	public NetTracker netTracker;
 
+	//Stores the gun prefab for the player
 	private Gun gun;
 
 	private Animator anim;
