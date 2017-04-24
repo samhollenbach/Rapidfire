@@ -98,9 +98,10 @@ public class PlayerControl : NetworkBehaviour {
 		//will not register the flip
 		StartCoroutine (forceFlip ());
 
-		//Color sprite yellow to tell difference between  players
-//		GetComponent<SpriteRenderer>().color = Color.yellow;
-
+		//Colors sprites white to tell difference between  players
+		foreach (var sprite in this.gameObject.GetComponentsInChildren<SpriteRenderer>()) {
+			sprite.color = Color.white;
+		}
 	}
 
 
