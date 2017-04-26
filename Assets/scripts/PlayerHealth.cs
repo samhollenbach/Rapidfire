@@ -75,20 +75,23 @@ public class PlayerHealth : NetworkBehaviour {
 
 	IEnumerator waitForDeath () {
 		yield return new WaitForSeconds(5.0f);
+		if (!isServer) {
+			CmdDeath ();
+		}
+	}
+
+	[Command]
+	public void CmdDeath(){
 		RpcDeath ();
 	}
 
 	[ClientRpc]
 	public void RpcDeath() {
-		CmdStopHost ();
+		NetworkLobbyManager.singleton.StopHost ();
 		NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = false;
 		SceneManager.LoadScene (3);
 	}
 
-	[Command]
-	public void CmdStopHost(){
-		NetworkLobbyManager.singleton.StopHost ();
-	}
 	[ClientRpc]
 	public void RpcDeathAnimation(GameObject player) {
 		player.GetComponent<NetworkAnimator> ().SetTrigger ("Death");
