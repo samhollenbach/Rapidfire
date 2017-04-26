@@ -75,12 +75,12 @@ public class PlayerHealth : NetworkBehaviour {
 
 	IEnumerator waitForDeath () {
 		yield return new WaitForSeconds(5.0f);
+		NetworkLobbyManager.singleton.StopHost ();
 		RpcDeath ();
 	}
 
 	[ClientRpc]
 	public void RpcDeath() {
-		NetworkLobbyManager.singleton.StopHost ();
 		NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = false;
 		SceneManager.LoadScene (3);
 	}
