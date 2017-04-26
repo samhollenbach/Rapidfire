@@ -81,7 +81,8 @@ public class PlayerHealth : NetworkBehaviour {
 	[ClientRpc]
 	public void RpcDeath() {
 		NetworkLobbyManager.singleton.StopHost ();
-		NetworkLobbyManager.singleton.enabled = false;
+		NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = false;
+		//NetworkLobbyManager.singleton.enabled = false;
 		SceneManager.LoadScene (3);
 	}
 	[ClientRpc]
