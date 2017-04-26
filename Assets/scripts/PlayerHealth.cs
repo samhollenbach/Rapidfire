@@ -75,9 +75,7 @@ public class PlayerHealth : NetworkBehaviour {
 
 	IEnumerator waitForDeath () {
 		yield return new WaitForSeconds(5.0f);
-		if (!isServer) {
-			CmdDeath ();
-		}
+		CmdDeath ();
 	}
 
 	[Command]
