@@ -8,9 +8,11 @@ public class StartButton : MonoBehaviour {
 	
 	public void StartGameButton(int sceneIndex){
 		SceneManager.LoadScene (sceneIndex);
-//		if (sceneIndex == 1) {
-//			NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = true;
-//		}
+		if (sceneIndex == 1) {
+			NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = true;
+		} else {
+			NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = false;
+		}
 	}
 
 }
