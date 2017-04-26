@@ -12,9 +12,9 @@ public class PlayerHealth : NetworkBehaviour {
 	[SyncVar]
 	public int currentHP;
 
-	public Image hurtImage;
-	public Color flashColor = new Color(1f, 0f, 0f, 0.1f);
-	public float flashSpeed = 5f;
+//	public Image hurtImage;
+//	public Color flashColor = new Color(1f, 0f, 0f, 0.1f);
+//	public float flashSpeed = 5f;
 
 	private bool hurt = false;
 	private bool dead = false;
@@ -32,15 +32,15 @@ public class PlayerHealth : NetworkBehaviour {
 
 		plyrControl = this.gameObject.GetComponent<PlayerControl> ();
 
-		hurtImage = GameObject.Find ("HUDCanvas/Image").GetComponent<Image>();
+//		hurtImage = GameObject.Find ("HUDCanvas/Image").GetComponent<Image>();
 	}
 
 	// Update is called once per frame
 	void Update () {
 		if (hurt) {
-			hurtImage.color = flashColor;
+//			hurtImage.color = flashColor;
 		} else {
-			hurtImage.color = Color.Lerp (hurtImage.color, Color.clear, flashSpeed * Time.deltaTime);
+//			hurtImage.color = Color.Lerp (hurtImage.color, Color.clear, flashSpeed * Time.deltaTime);
 		} 
 		hurt = false;
 

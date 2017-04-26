@@ -79,7 +79,7 @@ public class PlayerControl : NetworkBehaviour {
 		this.netTracker = GetComponent<NetTracker> ();
 
 		//Initializes HUDCanvas object for showing Health Bars
-		GameObject.Find("HUDCanvas").GetComponent<Canvas>();
+//		GameObject.Find("HUDCanvas").GetComponent<Canvas>();
 
 		//Initializes object to check if player is on the ground
 		groundCheck = transform.Find("groundCheck");
