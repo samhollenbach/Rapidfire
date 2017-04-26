@@ -129,13 +129,15 @@ public class PlayerControl : NetworkBehaviour {
 			
 		//Must set the z axis =/= 0 to use ScreenToWorldPoint
 		mousePosition.z = 10;
-		//Debug.Log (mousePosition);
+
 		//Sets the current mouse position for other methods to use
 		setMousePos (mousePosition);
 
 		if (canMove) {
 			if (!mouseNull) {
 				checkFlip (this.gameObject, playerCam.ScreenToWorldPoint(getMousePos()));
+
+				setGunRotation ();
 			}
 
 
@@ -148,6 +150,18 @@ public class PlayerControl : NetworkBehaviour {
 			//Checks jump input and applies jump if grounded
 			checkJump ();
 		}
+	}
+
+	void setGunRotation(){
+		Vector3 mousePosition = playerCam.ScreenToWorldPoint(getMousePos ());
+		GameObject gunObject = this.GetComponentInChildren<Gun> ().gameObject;
+		float direcY = gunObject.transform.position.y - mousePosition.y;
+		float direcX = gunObject.transform.position.x - mousePosition.x;
+		float angle = Mathf.Atan2(direcY, direcX) * Mathf.Rad2Deg;
+		if (facingRight) {
+			angle += 180;
+		}
+		gunObject.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 	}
 
 	//Checks what inputs are down and applies horizontal movement
