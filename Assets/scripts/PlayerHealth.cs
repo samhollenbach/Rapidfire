@@ -80,6 +80,7 @@ public class PlayerHealth : NetworkBehaviour {
 
 	[ClientRpc]
 	public void RpcDeath() {
+		NetworkLobbyManager.singleton.StopHost ();
 		SceneManager.LoadScene (3);
 	}
 	[ClientRpc]
