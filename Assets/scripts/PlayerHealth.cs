@@ -76,7 +76,8 @@ public class PlayerHealth : NetworkBehaviour {
 	IEnumerator waitForDeath () {
 		yield return new WaitForSeconds(5.0f);
 		RpcDeath ();
-		NetworkLobbyManager.singleton.StopHost();
+		yield return new WaitForSeconds(2.0f);
+		NetworkLobbyManager.singleton.StopHost ();
 	}
 
 //	[Command]
