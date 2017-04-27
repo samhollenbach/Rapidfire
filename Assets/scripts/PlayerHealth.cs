@@ -58,7 +58,6 @@ public class PlayerHealth : NetworkBehaviour {
 		currentHP -= damage;
 		if (currentHP <= 0) {
 			playerHealthBar.currentHealth = 1;
-			playerHealthBar.enabled = false;
 		} else {
 			playerHealthBar.currentHealth = currentHP;
 		}
@@ -85,14 +84,15 @@ public class PlayerHealth : NetworkBehaviour {
 		//Call RpcDeath on all clients
 
 
-		RpcDeath ();
+		RpcDeath (this.gameObject);
 
 	}
 
 	//Tells all clients to disconnect from the server and load the end screen
 	[ClientRpc]
-	public void RpcDeath() {
+	public void RpcDeath(GameObject player) {
 		//Stops the client connection to the server
+		player.GetComponent<PlayerHealth>().playerHealthBar.enabled = false;
 		NetworkLobbyManager.singleton.StopClient ();
 		//Closes the network manager HUD
 		NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = false;
@@ -104,6 +104,8 @@ public class PlayerHealth : NetworkBehaviour {
 		//Loads the end game screen
 		SceneManager.LoadScene (3);
 	}
+
+
 
 
 	[ClientRpc]
