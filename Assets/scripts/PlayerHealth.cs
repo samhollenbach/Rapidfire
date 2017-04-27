@@ -84,15 +84,14 @@ public class PlayerHealth : NetworkBehaviour {
 		//Call RpcDeath on all clients
 
 
-		RpcDeath (this.gameObject);
+		RpcDeath ();
 
 	}
 
 	//Tells all clients to disconnect from the server and load the end screen
 	[ClientRpc]
-	public void RpcDeath(GameObject player) {
+	public void RpcDeath() {
 		//Stops the client connection to the server
-		player.GetComponent<PlayerHealth>().playerHealthBar.enabled = false;
 		NetworkLobbyManager.singleton.StopClient ();
 		//Closes the network manager HUD
 		NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = false;
@@ -110,6 +109,7 @@ public class PlayerHealth : NetworkBehaviour {
 
 	[ClientRpc]
 	public void RpcDeathAnimation(GameObject player) {
+		player.GetComponent<PlayerHealth>().playerHealthBar.enabled = false;
 		player.GetComponent<NetworkAnimator> ().SetTrigger ("Death");
 	}
 }
