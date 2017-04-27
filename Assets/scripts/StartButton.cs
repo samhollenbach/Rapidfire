@@ -11,6 +11,8 @@ public class StartButton : MonoBehaviour {
 		if (NetworkLobbyManager.singleton != null) {
 			if (sceneIndex == 1) {
 				NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = true;
+			}else if(sceneIndex == 0){
+				NetworkManager.singleton.StopServer ();
 			} else {
 				NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = false;
 			}
