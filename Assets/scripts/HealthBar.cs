@@ -26,11 +26,11 @@ public class HealthBar : NetworkBehaviour{
 	}
 
 	void Update() {
-		if (player.GetComponent<PlayerHealth> ().currentHP <= 0) {
-			currentHealth = 0;
-		} else {
-			currentHealth = player.GetComponent<PlayerHealth> ().currentHP;
-		}
+//		if (player.GetComponent<PlayerHealth> ().currentHP <= 0) {
+//			currentHealth = 0;
+//		} else {
+//			currentHealth = player.GetComponent<PlayerHealth> ().currentHP;
+//		}
 
 		collider = this.gameObject.GetComponent<BoxCollider2D> ();
 //		max = rend.bounds.max;

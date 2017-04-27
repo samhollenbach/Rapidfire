@@ -56,7 +56,11 @@ public class PlayerHealth : NetworkBehaviour {
 		}
 		hurt = true;
 		currentHP -= damage;
-		playerHealthBar.currentHealth = currentHP;
+		if (currentHP <= 0) {
+			playerHealthBar.currentHealth = 1;
+		} else {
+			playerHealthBar.currentHealth = currentHP;
+		}
 		if (!dead) {
 			Death ();
 		}
