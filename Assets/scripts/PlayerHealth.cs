@@ -71,7 +71,7 @@ public class PlayerHealth : NetworkBehaviour {
 			return;
 		}
 		if (currentHP <= 0) {
-			playerHealthBar.currentHealth = 0;
+//			playerHealthBar.currentHealth = 0;
 			dead = true;
 			RpcDeathAnimation(this.gameObject);
 		}
