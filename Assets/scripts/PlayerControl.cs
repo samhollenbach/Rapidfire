@@ -301,16 +301,4 @@ public class PlayerControl : NetworkBehaviour {
 	public Vector3 getMousePos(){
 		return(mousePos);
 	}
-
-	void OnDisconnectedFromServer(NetworkDisconnection info) {
-		if (Network.isServer) {
-			Debug.Log ("Local server connection disconnected");
-		}else if (info == NetworkDisconnection.LostConnection) {
-			Debug.Log ("Lost connection to the server");
-			NetworkLobbyManager.singleton.StopHost ();
-		} else {
-			Debug.Log ("Successfully diconnected from the server");
-		}
-	}
-
 }
