@@ -76,12 +76,12 @@ public class PlayerHealth : NetworkBehaviour {
 	IEnumerator waitForDeath () {
 		yield return new WaitForSeconds(5.0f);
 		RpcDeath ();
-		waitStopHost ();
+		//waitStopHost ();
 	}
 
 	IEnumerator waitStopHost () {
 		yield return new WaitForSeconds(5.0f);
-		NetworkLobbyManager.singleton.StopHost ();
+
 	}
 
 //	[Command]
@@ -94,7 +94,7 @@ public class PlayerHealth : NetworkBehaviour {
 		NetworkLobbyManager.singleton.StopClient ();
 		NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = false;
 		SceneManager.LoadScene (3);
-
+		NetworkLobbyManager.singleton.StopServer ();
 
 	}
 
