@@ -758,7 +758,7 @@ MonoBehaviour:
   facingRight: 1
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4294966783
   playerCam: {fileID: 0}
   netTracker: {fileID: 0}
   canMove: 0
