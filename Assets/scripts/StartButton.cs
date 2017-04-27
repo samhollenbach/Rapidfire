@@ -7,7 +7,6 @@ using UnityEngine.Networking;
 public class StartButton : MonoBehaviour {
 	
 	public void StartGameButton(int sceneIndex){
-		SceneManager.LoadScene (sceneIndex);
 		if (NetworkLobbyManager.singleton != null) {
 			if (sceneIndex == 1) {
 				NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = true;
@@ -17,6 +16,8 @@ public class StartButton : MonoBehaviour {
 				NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = false;
 			}
 		}
+
+		SceneManager.LoadScene (sceneIndex);
 	}
 
 }
