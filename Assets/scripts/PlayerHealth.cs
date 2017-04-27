@@ -58,6 +58,7 @@ public class PlayerHealth : NetworkBehaviour {
 		currentHP -= damage;
 		if (currentHP <= 0) {
 			playerHealthBar.currentHealth = 1;
+			playerHealthBar.enabled = false;
 		} else {
 			playerHealthBar.currentHealth = currentHP;
 		}
