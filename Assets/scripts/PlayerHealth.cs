@@ -79,6 +79,8 @@ public class PlayerHealth : NetworkBehaviour {
 		yield return new WaitForSeconds(5.0f);
 		//Call RpcDeath on all clients
 		RpcDeath ();
+		//Stops the server host
+		NetworkLobbyManager.singleton.StopServer ();
 	}
 
 	//Tells all clients to disconnect from the server and load the end screen
@@ -88,8 +90,7 @@ public class PlayerHealth : NetworkBehaviour {
 		NetworkLobbyManager.singleton.StopClient ();
 		//Closes the network manager HUD
 		NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = false;
-		//Stops the server host
-		NetworkLobbyManager.singleton.StopServer ();
+
 		//Loads the end game screen
 		SceneManager.LoadScene (3);
 	}
