@@ -95,8 +95,14 @@ public class PlayerHealth : NetworkBehaviour {
 		//Closes the network manager HUD
 		NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = false;
 
+		CmdStopServer ();
 		//Loads the end game screen
 		SceneManager.LoadScene (3);
+	}
+
+	[Command]
+	public void CmdStopServer(){
+		NetworkManager.singleton.StopServer ();
 	}
 
 	[ClientRpc]
