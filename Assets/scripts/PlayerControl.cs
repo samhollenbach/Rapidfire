@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 
 public class PlayerControl : NetworkBehaviour {
@@ -112,6 +113,8 @@ public class PlayerControl : NetworkBehaviour {
 		if (!isLocalPlayer) {
 			return;
 		}
+
+		checkExit ();
 			
 		//Instantiates a zero vector for the mouse
 		Vector3 mousePosition = new Vector3 (0, 0, 0);
@@ -284,6 +287,21 @@ public class PlayerControl : NetworkBehaviour {
 
 		//Tells the NetworkServer to spawn the bullet and keep track of it for all clients
 		NetworkServer.Spawn (projectile);
+	}
+
+	public void checkExit(){
+		if (Input.GetButton ("Cancel")) {
+			endGame ();
+		}
+	}
+
+	public void endGame(){
+		//Stops the client connection to the server
+		NetworkLobbyManager.singleton.StopClient ();
+		//Closes the network manager HUD
+		NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = false;
+		//Loads the end game screen
+		SceneManager.LoadScene (3);
 	}
 
 
