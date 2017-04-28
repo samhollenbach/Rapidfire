@@ -279,7 +279,7 @@ public class PlayerControl : NetworkBehaviour {
 		Vector3 bulletSpawn = gunTip;
 
 		//Creates the direction vector on which the bullet will travel and normalizes it
-		Vector3 direction = cursor - bulletSpawn;
+		Vector3 direction = bulletSpawn - gun.transform.position;
 		direction.z = 0;
 		direction.Normalize();
 
@@ -288,12 +288,14 @@ public class PlayerControl : NetworkBehaviour {
 
 		//Sets the angle of travel and rotation for the bullet
 		var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+		//angle = gun.transform.eulerAngles
 		projectile.transform.rotation = Quaternion.AngleAxis (angle,Vector3.forward);
 
 		//Sets the source of the bullet to this player
 		projectile.GetComponent<Bullet> ().setSource(player);
 
 		//Sets the velocity of the bullet
+		//direction = gunTip - gun.transform.position;
 		projectile.GetComponent<Rigidbody2D>().velocity = (direction * cg.speed) * 10;
 
 		//Tells the NetworkServer to spawn the bullet and keep track of it for all clients
