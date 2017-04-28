@@ -291,12 +291,18 @@ public class PlayerControl : NetworkBehaviour {
 
 	public void checkExit(){
 		if (Input.GetButton ("Cancel")) {
-			RpcEndGame ();
 			if (isServer) {
-				//NetworkManager.singleton.StopServer ();
+				RpcEndGame ();
+			} else {
+				CmdEndGame ();
 			}
 			//SceneManager.LoadScene (3);
 		}
+	}
+
+	[Command]
+	public void CmdEndGame(){
+		RpcEndGame ();
 	}
 
 	[ClientRpc]
