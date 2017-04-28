@@ -164,6 +164,17 @@ public class PlayerControl : NetworkBehaviour {
 		if (facingRight) {
 			angle += 180;
 		}
+
+		print (angle);
+		if (angle > 45 && angle <= 100) {
+			angle = 45;
+		} else if (angle < -45 && angle >= -100) {
+			angle = -45;
+		}else if (angle > 225 && angle < 320) {
+			angle = 320;
+		}else if (angle > 90 && angle < 145) {
+			angle = 145;
+		}
 		gunObject.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 	}
 
