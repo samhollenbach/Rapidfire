@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
-using UnityEngine.SceneManagement;
 
 public class PlayerHealth : NetworkBehaviour {
 
@@ -91,12 +90,7 @@ public class PlayerHealth : NetworkBehaviour {
 	//Tells all clients to disconnect from the server and load the end screen
 	[ClientRpc]
 	public void RpcDeath() {
-		//Stops the client connection to the server
-		NetworkLobbyManager.singleton.StopClient ();
-		//Closes the network manager HUD
-		NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = false;
-		//Loads the end game screen
-		SceneManager.LoadScene (3);
+		GetComponent<PlayerControl> ().endGame ();
 	}
 
 

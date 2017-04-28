@@ -295,6 +295,7 @@ public class PlayerControl : NetworkBehaviour {
 			if (isServer) {
 				NetworkManager.singleton.StopHost ();
 			}
+			SceneManager.LoadScene (3);
 		}
 	}
 
