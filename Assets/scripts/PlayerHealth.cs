@@ -82,15 +82,15 @@ public class PlayerHealth : NetworkBehaviour {
 		yield return new WaitForSeconds(5.0f);
 		//Call RpcDeath on all clients
 
-
-		RpcDeath ();
+		GetComponent<PlayerControl> ().RpcEndGame ();
+		//RpcDeath ();
 
 	}
 
 	//Tells all clients to disconnect from the server and load the end screen
 	[ClientRpc]
 	public void RpcDeath() {
-		GetComponent<PlayerControl> ().endGame ();
+		
 	}
 
 
