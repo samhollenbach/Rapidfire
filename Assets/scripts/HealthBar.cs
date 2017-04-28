@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -43,7 +44,16 @@ public class HealthBar : NetworkBehaviour{
 
 		// Draw a Health Bar
 
-		Vector3 HealthBarPosition = transform.position + new Vector3 (0, collider.size.y * 3.5f, 0);
+		Vector3 HealthBarPosition = new Vector3(0,0,0);
+
+		try{
+			HealthBarPosition = transform.position + new Vector3 (0, collider.size.y * 3.5f, 0);
+		}catch(Exception e){
+			print ("Test");
+			Debug.Log (e);
+		}
+
+
 
 		pos = Camera.main.WorldToScreenPoint(HealthBarPosition);
 		//print (rend.bounds.size.y);
