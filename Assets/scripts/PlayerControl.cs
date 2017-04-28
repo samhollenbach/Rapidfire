@@ -293,9 +293,9 @@ public class PlayerControl : NetworkBehaviour {
 		if (Input.GetButton ("Cancel")) {
 			endGame ();
 			if (isServer) {
-				NetworkManager.singleton.StopHost ();
+				NetworkManager.singleton.StopServer ();
 			}
-			SceneManager.LoadScene (3);
+			//SceneManager.LoadScene (3);
 		}
 	}
 
