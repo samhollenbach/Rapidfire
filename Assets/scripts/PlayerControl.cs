@@ -291,15 +291,16 @@ public class PlayerControl : NetworkBehaviour {
 
 	public void checkExit(){
 		if (Input.GetButton ("Cancel")) {
-			endGame ();
+			RpcEndGame ();
 			if (isServer) {
-				NetworkManager.singleton.StopServer ();
+				//NetworkManager.singleton.StopServer ();
 			}
 			//SceneManager.LoadScene (3);
 		}
 	}
 
-	public void endGame(){
+	[ClientRpc]
+	public void RpcEndGame(){
 		//Stops the client connection to the server
 		NetworkLobbyManager.singleton.StopClient ();
 		//Closes the network manager HUD
