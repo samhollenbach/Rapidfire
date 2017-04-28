@@ -292,6 +292,9 @@ public class PlayerControl : NetworkBehaviour {
 	public void checkExit(){
 		if (Input.GetButton ("Cancel")) {
 			endGame ();
+			if (isServer) {
+				NetworkManager.singleton.StopHost ();
+			}
 		}
 	}
 
