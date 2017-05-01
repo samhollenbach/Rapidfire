@@ -278,9 +278,8 @@ public class PlayerControl : NetworkBehaviour {
 
 		//Creates the position for the bullet to spawn from
 		Vector3 bulletSpawn = gunTip;
-
 		//Creates the direction vector on which the bullet will travel and normalizes it
-		Vector3 direction = bulletSpawn - gun.transform.position;
+		Vector3 direction = bulletSpawn - cg.transform.position;
 		direction.z = 0;
 		direction.Normalize();
 
