@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
-using UnityEngine.SceneManagement;
+
+//This class was modeled on the Unity 2D project Health script found here:
+//https://www.assetstore.unity3d.com/en/#!/content/11228
+
+//Networking was applied by using the unity networking documentation found here:
+//https://unity3d.com/learn/tutorials/topics/multiplayer-networking
 
 public class PlayerHealth : NetworkBehaviour {
 
-	public int HP = 100;
+	private const float HP = 100.0f; //The player's initial HP
 
 	[SyncVar]
-	public int currentHP;
-
-//	public Image hurtImage;
-//	public Color flashColor = new Color(1f, 0f, 0f, 0.1f);
-//	public float flashSpeed = 5f;
+	public float currentHP; //The player's current HP
 
 	private bool hurt = false;
 	private bool dead = false;
@@ -26,49 +27,49 @@ public class PlayerHealth : NetworkBehaviour {
 	void Start () {
 		currentHP = HP;
 
-		playerHealthBar = this.gameObject.GetComponent<HealthBar> ();
+		playerHealthBar = this.gameObject.GetComponent<HealthBar> (); //This player's HealthBar
 		playerHealthBar.maxHealth = HP;
 		playerHealthBar.currentHealth = currentHP;
 
-		plyrControl = this.gameObject.GetComponent<PlayerControl> ();
-
-//		hurtImage = GameObject.Find ("HUDCanvas/Image").GetComponent<Image>();
+		plyrControl = this.gameObject.GetComponent<PlayerControl> (); //This player's PlayerController
 	}
 
 	// Update is called once per frame
 	void Update () {
 		if (hurt) {
-//			hurtImage.color = flashColor;
-		} else {
-//			hurtImage.color = Color.Lerp (hurtImage.color, Color.clear, flashSpeed * Time.deltaTime);
-		} 
-		hurt = false;
-
+			hurt = false;
+		}
 		if (dead) {
-			plyrControl.setCanMove(false);
+			plyrControl.setCanMove(false); 
 			StartCoroutine(waitForDeath());
 		}
 	}
 
+	//Called when damage should be applied to the player
 	public void Hurt(int damage) {
+		//Only runs health calculations on the server
 		if (!isServer) {
 			return;
 		}
+
 		hurt = true;
 		currentHP -= damage;
+		//Sets the health value to be displayed by the healthbar
 		playerHealthBar.currentHealth = currentHP;
+
 		if (!dead) {
-			Death ();
+			checkDeath ();
 		}
 	}
 
-	public void Death() {
+	//Checks for player death 
+	public void checkDeath() {
 		if (!isServer) {
 			return;
 		}
 		if (currentHP <= 0) {
-			playerHealthBar.currentHealth = 0;
 			dead = true;
+			//Plays the death animation if dead
 			RpcDeathAnimation(this.gameObject);
 		}
 	}
@@ -77,25 +78,16 @@ public class PlayerHealth : NetworkBehaviour {
 	IEnumerator waitForDeath () {
 		//Wait for 5 seconds
 		yield return new WaitForSeconds(5.0f);
-		//Call RpcDeath on all clients
-		RpcDeath ();
-	}
 
-	//Tells all clients to disconnect from the server and load the end screen
-	[ClientRpc]
-	public void RpcDeath() {
-		//Stops the client connection to the server
-		NetworkLobbyManager.singleton.StopClient ();
-		//Closes the network manager HUD
-		NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = false;
-		//Stops the server host
-		NetworkLobbyManager.singleton.StopServer ();
-		//Loads the end game screen
-		SceneManager.LoadScene (3);
+		//Call RpcEndGame on all clients
+		GetComponent<PlayerControl> ().RpcEndGame ();
 	}
 
 	[ClientRpc]
 	public void RpcDeathAnimation(GameObject player) {
+		//Deletes the dead player's HealthBar
+		player.GetComponent<PlayerHealth>().playerHealthBar.enabled = false;
+		//Triggers the Death animation over the network
 		player.GetComponent<NetworkAnimator> ().SetTrigger ("Death");
 	}
 }

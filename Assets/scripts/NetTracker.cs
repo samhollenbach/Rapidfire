@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+//This was built using the Unity multiplayer networking API
+//Documentation for the Unity multiplayer networking can be found here:
+//https://unity3d.com/learn/tutorials/topics/multiplayer-networking
 public class NetTracker : NetworkBehaviour {
 
 	//Synvs facingRight to the server
@@ -11,6 +14,7 @@ public class NetTracker : NetworkBehaviour {
 
 
 	//Command runs on the server and tells the facing right variable to change
+	//https://docs.unity3d.com/ScriptReference/Networking.CommandAttribute.html
 	[Command]
 	public void CmdFlipSprite(GameObject player, bool facing)
 	{
@@ -19,6 +23,7 @@ public class NetTracker : NetworkBehaviour {
 	}
 
 	//The callback function makes the facingRight change to all clients
+	//https://docs.unity3d.com/ScriptReference/Networking.ClientRpcAttribute.html
 	[ClientRpc]
 	void RpcFacingCallback(GameObject player, bool facing)
 	{

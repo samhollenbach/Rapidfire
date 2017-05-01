@@ -3,18 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
+
+//This was built using the Unity multiplayer networking API
+//Documentation for the Unity multiplayer networking can be found here:
+//https://unity3d.com/learn/tutorials/topics/multiplayer-networking
+
+
+//Physics and movement controls were modeled on the public unity 2d project found here:
+//https://www.assetstore.unity3d.com/en/#!/content/11228
 
 
 public class PlayerControl : NetworkBehaviour {
 
 	//Standard player movement constants
-	//Will have to play with these numbers
-	public float maxSpeed = 50f;
-	public float moveForce = 900f;
-	public float jumpForce = 5000f;
+	private const float maxSpeed = 50f;
+	private const float moveForce = 900f;
+	private const float jumpForce = 5000f;
+	private const float groundRadius = 0.2f; //The radius for which the player should check for ground
 
 	//Conditions for direction faced and ability to jump
-	//[SyncVar]
 	public bool facingRight = true;
 
 	//If some other force is moving the player
@@ -26,15 +34,13 @@ public class PlayerControl : NetworkBehaviour {
 	//Checks if the player is on the ground
 	private bool grounded = false;
 
-	private float groundRadius = 0.2f;
-
+	//How long until the player can fire again
 	private float nextFire;
 
 	//Determines what player can stand on
 	public LayerMask whatIsGround;
 
 	//Stores player mouse position
-	[SyncVar]
 	private Vector3 mousePos;
 
 	//Stores the object of the players camera
@@ -49,25 +55,31 @@ public class PlayerControl : NetworkBehaviour {
 	//Stores the gun prefab for the player
 	private Gun gun;
 
+	//Stores the main animation object for this player
 	private Animator anim;
 
+	//Used to detect if the player can jump again after jumping
 	private bool jumped = false;
 
-	[SyncVar]
+	//True if the player is allowed to move using inputs
 	public bool canMove;
 
 	// This method is run as soon as the script is compiled
 	void Awake () {
-
+		//Keeps the program running when not in focus
 		Application.runInBackground = true;
+
+		//Sets the main animation object for the player
 		anim = GetComponent<Animator> ();
 
+		//Makes sure the fire cooldown is zero
 		nextFire = 0f;
 
+		//Sets the player able to move
 		canMove = true;
 
-		Debug.developerConsoleVisible = true;
-
+		//Gets the camera component and sets it to not active
+		//This makes sure only the local players camera is active
 		playerCam = GetComponentInChildren<Camera> ();
 		playerCam.gameObject.SetActive (false);
 	}
@@ -77,9 +89,6 @@ public class PlayerControl : NetworkBehaviour {
 	public override void OnStartLocalPlayer(){
 		//Initializes a NetTracker object to store networked variables
 		this.netTracker = GetComponent<NetTracker> ();
-
-		//Initializes HUDCanvas object for showing Health Bars
-//		GameObject.Find("HUDCanvas").GetComponent<Canvas>();
 
 		//Initializes object to check if player is on the ground
 		groundCheck = transform.Find("groundCheck");
@@ -93,6 +102,7 @@ public class PlayerControl : NetworkBehaviour {
 		playerHealthBar = GetComponent<HealthBar> ();
 		playerHealthBar.setPlayer (this.gameObject);
 
+		//Stores the local player's gun component
 		gun = GetComponentInChildren<Gun> ();
 
 		//Must force a flip call a fraction of a second after starting the game or else the client 
@@ -112,46 +122,45 @@ public class PlayerControl : NetworkBehaviour {
 		if (!isLocalPlayer) {
 			return;
 		}
-			
+		//Checks if the player presses ESC to exit the game
+		checkExit ();
 		//Instantiates a zero vector for the mouse
-		Vector3 mousePosition = new Vector3 (0, 0, 0);
-		bool mouseNull = false;
-
-		//Tries to get the current mouse position on the screen
-		try{
-			mousePosition = Input.mousePosition;
-		}
-		catch(Exception e){
-			//If the mouse position cannot be set, set mouse to null
-			mouseNull = true;
-			print (e);
-		}
-			
-		//Must set the z axis =/= 0 to use ScreenToWorldPoint
-		mousePosition.z = 10;
-
-		//Sets the current mouse position for other methods to use
-		setMousePos (mousePosition);
-
+		checkMouse();
 		if (canMove) {
-			if (!mouseNull) {
-				checkFlip (this.gameObject, playerCam.ScreenToWorldPoint(getMousePos()));
-
+			//Checks that the mouse position is properly set
+			if (!getMousePos ().Equals (Vector3.zero)) {
+				//Checks if the player shoul flip orientation
+				checkFlip ();
+				//Sets the gun pointed towards the cursor
 				setGunRotation ();
 			}
-
-
 			//Checks the fire input and runs the CmdFire method
 			checkFire ();
-
 			//Checks horizontal inputs and applies movements
 			applyHorizontalMovement ();
-
 			//Checks jump input and applies jump if grounded
 			checkJump ();
 		}
 	}
 
+	void checkMouse(){
+		//Instantiate mouse position to the zero vector 
+		Vector3 mousePosition = Vector3.zero;
+		//Tries to get the current mouse position on the screen
+		try{
+			mousePosition = Input.mousePosition;
+		}
+		catch(Exception e){
+			//If the mouse position cannot be set print an error
+			print (e);
+		}
+		//Must set the z axis =/= 0 to use ScreenToWorldPoint
+		mousePosition.z = 10;
+		//Sets the current mouse position for other methods to use
+		setMousePos (mousePosition);
+	}
+
+	//Sets the gun rotation facing towards the players cursor
 	void setGunRotation(){
 		Vector3 mousePosition = playerCam.ScreenToWorldPoint(getMousePos ());
 		GameObject gunObject = this.GetComponentInChildren<Gun> ().gameObject;
@@ -160,6 +169,16 @@ public class PlayerControl : NetworkBehaviour {
 		float angle = Mathf.Atan2(direcY, direcX) * Mathf.Rad2Deg;
 		if (facingRight) {
 			angle += 180;
+		}
+			
+		if (angle > 45 && angle <= 100) {
+			angle = 45;
+		} else if (angle < -45 && angle >= -100) {
+			angle = -45;
+		}else if (angle > 225 && angle < 320) {
+			angle = 320;
+		}else if (angle > 90 && angle < 145) {
+			angle = 145;
 		}
 		gunObject.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 	}
@@ -213,7 +232,9 @@ public class PlayerControl : NetworkBehaviour {
 	}
 
 	//Checks if the the player should flip its sprite direction
-	void checkFlip(GameObject player, Vector3 mouse){
+	void checkFlip(){
+		GameObject player = this.gameObject;
+		Vector3 mouse = playerCam.ScreenToWorldPoint (getMousePos ());
 		bool mouseRight = true;
 		//If mouse is actually to the left of the player then set mouseRight to false
 		if(mouse.x < player.transform.position.x) {
@@ -236,8 +257,7 @@ public class PlayerControl : NetworkBehaviour {
 	//Forces the player to flip when the game starts after .05s
 	IEnumerator forceFlip(){
 		yield return new WaitForSeconds(0.05f);
-		checkFlip (this.gameObject, getMousePos ());
-
+		checkFlip ();
 	}
 
 
@@ -263,7 +283,6 @@ public class PlayerControl : NetworkBehaviour {
 
 		//Creates the position for the bullet to spawn from
 		Vector3 bulletSpawn = gunTip;
-
 		//Creates the direction vector on which the bullet will travel and normalizes it
 		Vector3 direction = cursor - bulletSpawn;
 		direction.z = 0;
@@ -274,16 +293,44 @@ public class PlayerControl : NetworkBehaviour {
 
 		//Sets the angle of travel and rotation for the bullet
 		var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+		//angle = gun.transform.eulerAngles
 		projectile.transform.rotation = Quaternion.AngleAxis (angle,Vector3.forward);
 
 		//Sets the source of the bullet to this player
 		projectile.GetComponent<Bullet> ().setSource(player);
 
 		//Sets the velocity of the bullet
+		//direction = gunTip - gun.transform.position;
 		projectile.GetComponent<Rigidbody2D>().velocity = (direction * cg.speed) * 10;
 
 		//Tells the NetworkServer to spawn the bullet and keep track of it for all clients
 		NetworkServer.Spawn (projectile);
+	}
+
+	public void checkExit(){
+		if (Input.GetButton ("Cancel")) {
+			if (isServer) {
+				RpcEndGame ();
+			} else {
+				CmdEndGame ();
+			}
+			//SceneManager.LoadScene (3);
+		}
+	}
+
+	[Command]
+	public void CmdEndGame(){
+		RpcEndGame ();
+	}
+
+	[ClientRpc]
+	public void RpcEndGame(){
+		//Stops the client connection to the server
+		NetworkLobbyManager.singleton.StopClient ();
+		//Closes the network manager HUD
+		NetworkLobbyManager.singleton.GetComponent<NetworkManagerHUD> ().enabled = false;
+		//Loads the end game screen
+		SceneManager.LoadScene (3);
 	}
 
 
@@ -301,5 +348,4 @@ public class PlayerControl : NetworkBehaviour {
 	public Vector3 getMousePos(){
 		return(mousePos);
 	}
-
 }

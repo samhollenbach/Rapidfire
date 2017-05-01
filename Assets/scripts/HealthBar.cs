@@ -1,39 +1,35 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+
+
+//This class was modeled on the HealthBar class found in the unity documentation here:
+//https://docs.unity3d.com/Manual/UNetSetup.html
+
+//Networking was applied using the Unity networker, documentation found here:
+//https://unity3d.com/learn/tutorials/topics/multiplayer-networking
+
 
 public class HealthBar : NetworkBehaviour{
 
 	GUIStyle healthStyle;
 	GUIStyle backStyle;
 
-	public GameObject player;
-	public float maxHealth;
+	public GameObject player; //The player associated with this healthBar
+	public float maxHealth; 
 
-	public Renderer rend;
-	public BoxCollider2D collider;
-//	private Vector3 max;
+	public BoxCollider2D collider; //The 2d collision box of the player, used to calculate position
 
 	[SyncVar]
-	public float currentHealth;
-	[SyncVar]
-	Vector3 pos;
+	public float currentHealth; //The value for the current health of the player as represented by the HealthBar
 
-	void Start() {
-		rend = GetComponent<SpriteRenderer> ();
-//		max = rend.bounds.max;
-	}
+	[SyncVar]
+	Vector3 pos; //The position of the HealthBar
 
 	void Update() {
-		if (player.GetComponent<PlayerHealth> ().currentHP <= 0) {
-			currentHealth = 0;
-		} else {
-			currentHealth = player.GetComponent<PlayerHealth> ().currentHP;
-		}
-
 		collider = this.gameObject.GetComponent<BoxCollider2D> ();
-//		max = rend.bounds.max;
 	}
 
 
@@ -43,12 +39,17 @@ public class HealthBar : NetworkBehaviour{
 
 		// Draw a Health Bar
 
-		Vector3 HealthBarPosition = transform.position + new Vector3 (0, collider.size.y * 3.5f, 0);
+		Vector3 HealthBarPosition = new Vector3(0,0,0);
 
+		//Sets the position of the HealthBar using the collider size
+		try{
+			HealthBarPosition = transform.position + new Vector3 (0, collider.size.y * 3.5f, 0);
+		}catch(Exception e){
+			print (e);
+		}
+
+		//Converts HealthBar position to ScreenSpace
 		pos = Camera.main.WorldToScreenPoint(HealthBarPosition);
-		//print (rend.bounds.size.y);
-		//rend.bounds.extents.y
-		//46
 		// draw health bar background
 		GUI.color = Color.grey;
 		GUI.backgroundColor = Color.grey;
@@ -57,7 +58,6 @@ public class HealthBar : NetworkBehaviour{
 		// draw health bar amount
 		GUI.color = Color.green;
 		GUI.backgroundColor = Color.green;
-		//20 for y
 		GUI.Box(new Rect(pos.x-25, Screen.height - pos.y, currentHealth/2, 5), ".", healthStyle);
 	}
 
