@@ -49,7 +49,7 @@ public class HealthBar : NetworkBehaviour{
 		try{
 			HealthBarPosition = transform.position + new Vector3 (0, collider.size.y * 3.5f, 0);
 		}catch(Exception e){
-			
+			print (e);
 		}
 
 
