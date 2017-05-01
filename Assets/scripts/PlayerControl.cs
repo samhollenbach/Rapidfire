@@ -17,10 +17,10 @@ using UnityEngine.SceneManagement;
 public class PlayerControl : NetworkBehaviour {
 
 	//Standard player movement constants
-	//Will have to play with these numbers
-	public float maxSpeed = 50f;
-	public float moveForce = 900f;
-	public float jumpForce = 5000f;
+	private const float maxSpeed = 50f;
+	private const float moveForce = 900f;
+	private const float jumpForce = 5000f;
+	private const float groundRadius = 0.2f; //The radius for which the player should check for ground
 
 	//Conditions for direction faced and ability to jump
 	public bool facingRight = true;
@@ -34,8 +34,7 @@ public class PlayerControl : NetworkBehaviour {
 	//Checks if the player is on the ground
 	private bool grounded = false;
 
-	private float groundRadius = 0.2f;
-
+	//How long until the player can fire again
 	private float nextFire;
 
 	//Determines what player can stand on
