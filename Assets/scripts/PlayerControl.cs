@@ -5,7 +5,9 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
-
+//This was built using the Unity multiplayer networking API
+//Documentation for the Unity multiplayer networking can be found here:
+//https://unity3d.com/learn/tutorials/topics/multiplayer-networking
 public class PlayerControl : NetworkBehaviour {
 
 	//Standard player movement constants
@@ -15,7 +17,6 @@ public class PlayerControl : NetworkBehaviour {
 	public float jumpForce = 5000f;
 
 	//Conditions for direction faced and ability to jump
-	//[SyncVar]
 	public bool facingRight = true;
 
 	//If some other force is moving the player
@@ -35,7 +36,6 @@ public class PlayerControl : NetworkBehaviour {
 	public LayerMask whatIsGround;
 
 	//Stores player mouse position
-	[SyncVar]
 	private Vector3 mousePos;
 
 	//Stores the object of the players camera
@@ -50,25 +50,31 @@ public class PlayerControl : NetworkBehaviour {
 	//Stores the gun prefab for the player
 	private Gun gun;
 
+	//Stores the main animation object for this player
 	private Animator anim;
 
+	//Used to detect if the player can jump again after jumping
 	private bool jumped = false;
 
-	[SyncVar]
+	//True if the player is allowed to move using inputs
 	public bool canMove;
 
 	// This method is run as soon as the script is compiled
 	void Awake () {
-
+		//Keeps the program running when not in focus
 		Application.runInBackground = true;
+
+		//Sets the main animation object for the player
 		anim = GetComponent<Animator> ();
 
+		//Makes sure the fire cooldown is zero
 		nextFire = 0f;
 
+		//Sets the player able to move
 		canMove = true;
 
-		Debug.developerConsoleVisible = true;
-
+		//Gets the camera component and sets it to not active
+		//This makes sure only the local players camera is active
 		playerCam = GetComponentInChildren<Camera> ();
 		playerCam.gameObject.SetActive (false);
 	}
@@ -78,9 +84,6 @@ public class PlayerControl : NetworkBehaviour {
 	public override void OnStartLocalPlayer(){
 		//Initializes a NetTracker object to store networked variables
 		this.netTracker = GetComponent<NetTracker> ();
-
-		//Initializes HUDCanvas object for showing Health Bars
-//		GameObject.Find("HUDCanvas").GetComponent<Canvas>();
 
 		//Initializes object to check if player is on the ground
 		groundCheck = transform.Find("groundCheck");
@@ -94,6 +97,7 @@ public class PlayerControl : NetworkBehaviour {
 		playerHealthBar = GetComponent<HealthBar> ();
 		playerHealthBar.setPlayer (this.gameObject);
 
+		//Stores the local player's gun component
 		gun = GetComponentInChildren<Gun> ();
 
 		//Must force a flip call a fraction of a second after starting the game or else the client 
@@ -113,48 +117,45 @@ public class PlayerControl : NetworkBehaviour {
 		if (!isLocalPlayer) {
 			return;
 		}
-
+		//Checks if the player presses ESC to exit the game
 		checkExit ();
-			
 		//Instantiates a zero vector for the mouse
-		Vector3 mousePosition = new Vector3 (0, 0, 0);
-		bool mouseNull = false;
-
-		//Tries to get the current mouse position on the screen
-		try{
-			mousePosition = Input.mousePosition;
-		}
-		catch(Exception e){
-			//If the mouse position cannot be set, set mouse to null
-			mouseNull = true;
-			print (e);
-		}
-			
-		//Must set the z axis =/= 0 to use ScreenToWorldPoint
-		mousePosition.z = 10;
-
-		//Sets the current mouse position for other methods to use
-		setMousePos (mousePosition);
-
+		checkMouse();
 		if (canMove) {
-			if (!mouseNull) {
-				checkFlip (this.gameObject, playerCam.ScreenToWorldPoint(getMousePos()));
-
+			//Checks that the mouse position is properly set
+			if (!getMousePos ().Equals (Vector3.zero)) {
+				//Checks if the player shoul flip orientation
+				checkFlip ();
+				//Sets the gun pointed towards the cursor
 				setGunRotation ();
 			}
-
-
 			//Checks the fire input and runs the CmdFire method
 			checkFire ();
-
 			//Checks horizontal inputs and applies movements
 			applyHorizontalMovement ();
-
 			//Checks jump input and applies jump if grounded
 			checkJump ();
 		}
 	}
 
+	void checkMouse(){
+		//Instantiate mouse position to the zero vector 
+		Vector3 mousePosition = Vector3.zero;
+		//Tries to get the current mouse position on the screen
+		try{
+			mousePosition = Input.mousePosition;
+		}
+		catch(Exception e){
+			//If the mouse position cannot be set print an error
+			print (e);
+		}
+		//Must set the z axis =/= 0 to use ScreenToWorldPoint
+		mousePosition.z = 10;
+		//Sets the current mouse position for other methods to use
+		setMousePos (mousePosition);
+	}
+
+	//Sets the gun rotation facing towards the players cursor
 	void setGunRotation(){
 		Vector3 mousePosition = playerCam.ScreenToWorldPoint(getMousePos ());
 		GameObject gunObject = this.GetComponentInChildren<Gun> ().gameObject;
@@ -164,8 +165,7 @@ public class PlayerControl : NetworkBehaviour {
 		if (facingRight) {
 			angle += 180;
 		}
-
-		print (angle);
+			
 		if (angle > 45 && angle <= 100) {
 			angle = 45;
 		} else if (angle < -45 && angle >= -100) {
@@ -227,7 +227,9 @@ public class PlayerControl : NetworkBehaviour {
 	}
 
 	//Checks if the the player should flip its sprite direction
-	void checkFlip(GameObject player, Vector3 mouse){
+	void checkFlip(){
+		GameObject player = this.gameObject;
+		Vector3 mouse = playerCam.ScreenToWorldPoint (getMousePos ());
 		bool mouseRight = true;
 		//If mouse is actually to the left of the player then set mouseRight to false
 		if(mouse.x < player.transform.position.x) {
@@ -250,8 +252,7 @@ public class PlayerControl : NetworkBehaviour {
 	//Forces the player to flip when the game starts after .05s
 	IEnumerator forceFlip(){
 		yield return new WaitForSeconds(0.05f);
-		checkFlip (this.gameObject, getMousePos ());
-
+		checkFlip ();
 	}
 
 
