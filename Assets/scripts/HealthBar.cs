@@ -4,6 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+
+//This class was modeled on the HealthBar class found in the unity documentation here:
+//https://docs.unity3d.com/Manual/UNetSetup.html
+
+//Networking was applied using the Unity networker, documentation found here:
+//https://unity3d.com/learn/tutorials/topics/multiplayer-networking
+
+
 public class HealthBar : NetworkBehaviour{
 
 	GUIStyle healthStyle;
@@ -21,7 +29,7 @@ public class HealthBar : NetworkBehaviour{
 	Vector3 pos; //The position of the HealthBar
 
 	void Update() {
-		collider = this.gameObject.GetComponent<BoxCollider2D> (); 
+		collider = this.gameObject.GetComponent<BoxCollider2D> ();
 	}
 
 

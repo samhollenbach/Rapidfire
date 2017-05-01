@@ -8,6 +8,12 @@ using UnityEngine.SceneManagement;
 //This was built using the Unity multiplayer networking API
 //Documentation for the Unity multiplayer networking can be found here:
 //https://unity3d.com/learn/tutorials/topics/multiplayer-networking
+
+
+//Physics and movement controls were modeled on the public unity 2d project found here:
+//https://www.assetstore.unity3d.com/en/#!/content/11228
+
+
 public class PlayerControl : NetworkBehaviour {
 
 	//Standard player movement constants
