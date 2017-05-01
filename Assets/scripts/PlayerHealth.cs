@@ -11,10 +11,6 @@ public class PlayerHealth : NetworkBehaviour {
 	[SyncVar]
 	public int currentHP;
 
-//	public Image hurtImage;
-//	public Color flashColor = new Color(1f, 0f, 0f, 0.1f);
-//	public float flashSpeed = 5f;
-
 	private bool hurt = false;
 	private bool dead = false;
 
@@ -30,19 +26,13 @@ public class PlayerHealth : NetworkBehaviour {
 		playerHealthBar.currentHealth = currentHP;
 
 		plyrControl = this.gameObject.GetComponent<PlayerControl> ();
-
-//		hurtImage = GameObject.Find ("HUDCanvas/Image").GetComponent<Image>();
 	}
 
 	// Update is called once per frame
 	void Update () {
 		if (hurt) {
-//			hurtImage.color = flashColor;
-		} else {
-//			hurtImage.color = Color.Lerp (hurtImage.color, Color.clear, flashSpeed * Time.deltaTime);
-		} 
-		hurt = false;
-
+			hurt = false;
+		}
 		if (dead) {
 			plyrControl.setCanMove(false);
 			StartCoroutine(waitForDeath());
@@ -70,7 +60,6 @@ public class PlayerHealth : NetworkBehaviour {
 			return;
 		}
 		if (currentHP <= 0) {
-//			playerHealthBar.currentHealth = 0;
 			dead = true;
 			RpcDeathAnimation(this.gameObject);
 		}
@@ -83,18 +72,7 @@ public class PlayerHealth : NetworkBehaviour {
 		//Call RpcDeath on all clients
 
 		GetComponent<PlayerControl> ().RpcEndGame ();
-		//RpcDeath ();
-
 	}
-
-	//Tells all clients to disconnect from the server and load the end screen
-	[ClientRpc]
-	public void RpcDeath() {
-		
-	}
-
-
-
 
 	[ClientRpc]
 	public void RpcDeathAnimation(GameObject player) {
