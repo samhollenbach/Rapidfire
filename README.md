@@ -20,4 +20,4 @@ The main horizontal movement is controlled by the _A_ and _D_ keys (or arrow key
 
 ### Issues
 
-We are keeping track of bugs using GitHub Issues [here](/issues).
+We are keeping track of bugs using GitHub Issues [here](https://github.com/samhollenbach/Rapidfire/issues).
