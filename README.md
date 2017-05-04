@@ -1,12 +1,16 @@
-# Rapidfire
+# _Rapidfire v1.0_
 
 _Rapidfire_ is a networked side-on 2D shooter. The objective is to kill the other player before they kill you.
 
 _Rapidfire_ was made in Unity 5.5.1 by Lawson Busch, Sam Hollenbach and David McNichols. 
 
-## Running Rapidfire
+## Building _Rapidfire_
 
-To run _Rapidire_, clone this project from GitHub to your desired directory. Open this directory in Unity, and you should see 4 scene files in the Assets folder in the project explorer. Double click the "Start" scene to open it. You should now be able to run the game by either pressing the play button at the top of the Unity client, or pressing Ctrl-B (Command-B on Mac) to build and run a standalone version of the game. 
+To run _Rapidire_, clone this project from GitHub to your desired directory. Open this directory in Unity, and you should see 4 scene files in the Assets folder in the project explorer. Double click the "Start" scene to open it. You should now be able to run the game by either pressing the play button at the top of the Unity client, or pressing Ctrl-B (Command-B on Mac) to build and run a standalone version of the game.
+
+_Note: You will need to have Unity 5.5.1 or above installed to run this game. Click [here](https://unity3d.com/) to install Unity._
+
+## Using _Rapidfire_
 
 Once in the game, press the Play button to enter the Lobby scene. Once in the Lobby scene:
 -To host a game click "LAN Host(H)", this will take you to the host lobbby. Next, share your IP with the person you want to play (find your IP with [this](http://www.whatsmyip.org/) tool) and wait for them to join.
