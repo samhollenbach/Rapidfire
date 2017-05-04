@@ -12,13 +12,6 @@ public class CameraFollow : MonoBehaviour
 	public int w = Screen.width/2;
 	public int h = Screen.height/2;
 
-
-
-	//change all these to vectors
-
-
-
-
 	// Update is called once per frame
 	void Update()
 	{

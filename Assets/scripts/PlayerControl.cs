@@ -62,7 +62,7 @@ public class PlayerControl : NetworkBehaviour {
 	private bool jumped = false;
 
 	//True if the player is allowed to move using inputs
-	public bool canMove;
+	private bool canMove;
 
 	// This method is run as soon as the script is compiled
 	void Awake () {
@@ -314,7 +314,6 @@ public class PlayerControl : NetworkBehaviour {
 			} else {
 				CmdEndGame ();
 			}
-			//SceneManager.LoadScene (3);
 		}
 	}
 
@@ -332,8 +331,7 @@ public class PlayerControl : NetworkBehaviour {
 		//Loads the end game screen
 		SceneManager.LoadScene (3);
 	}
-
-
+		
 	//Sets the player unable to move
 	public void setCanMove(bool canMove) {
 		this.canMove = canMove;
