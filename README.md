@@ -24,9 +24,9 @@ To run _Rapidire_:
 
 Once in the game, press the Play button to enter the Lobby scene. Once in the Lobby scene:
 
--To host a game click "LAN Host(H)", this will take you to the host lobbby. Next, share your IP with the person you want to play (find your IP with [this](http://www.whatsmyip.org/) tool) and wait for them to join.
+- To host a game click "LAN Host(H)", this will take you to the host lobbby. Next, share your IP with the person you want to play (find your IP with [this](http://www.whatsmyip.org/) tool) and wait for them to join.
 
--To join a game enter the IP of the Host player into the textbox next to "LAN Client(C)", and then click this button to enter the host lobby. 
+- To join a game enter the IP of the Host player into the textbox next to "LAN Client(C)", and then click this button to enter the host lobby. 
 
 _NOTE: Rapidfire is LAN only, meaning host and client will either need to be run on the same wifi network._
 
