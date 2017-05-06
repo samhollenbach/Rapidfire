@@ -16,7 +16,7 @@ To run _Rapidire_:
 
 3. In the top left corner of unity, under the Hierarchy tab, you should see 4 scene files, one of which is labeled _Start_. 
 
-3a. If you do not see the start scenes, double click the _Assets_ folder in the Unity project explorer to open it. Then click and drag the each of the four sene objects into the space under the Hierarchy tab. (These scenes have the unity logo as their picture).
+  A. If you do not see the start scenes, double click the _Assets_ folder in the Unity project explorer to open it. Then click and drag the each of the four sene objects into the space under the Hierarchy tab. (These scenes have the unity logo as their picture).
   
 4. Double click the "Start" scene to open it. You should now be able to run the game by either pressing the play button at the top of the Unity client, or pressing Ctrl-B (Command-B on Mac) to build and run a standalone version of the game.
 
